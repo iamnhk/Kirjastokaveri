@@ -4,16 +4,22 @@ A full-stack library companion application.
 
 ## Tech Stack
 
-### Frontend
+### Frontend Stack
 
 - React 19
 - TypeScript
 - Vite
 - Tailwind CSS
 
+### Backend Stack
+
+- FastAPI
+- Uvicorn
+- Python 3.12+
+
 ## Getting Started
 
-### Frontend
+### Frontend Setup
 
 1. Navigate to the frontend directory:
 
@@ -21,39 +27,83 @@ A full-stack library companion application.
 cd frontend
 ```
 
-2. Install dependencies:
+1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Start the development server:
+1. Start the development server:
 
 ```bash
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`
+The application will be available at `http://localhost:5173`.
+
+### Backend Setup
+
+1. Navigate to the backend directory:
+
+```bash
+cd backend
+```
+
+1. Create and activate a virtual environment (example with `venv`):
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+```
+
+1. Install dependencies and copy environment variables:
+
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+# macOS/Linux
+cp .env.example .env
+# Windows (PowerShell)
+copy .env.example .env
+```
+
+1. Start the API with reload enabled:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+The API will be available at `http://localhost:8000` with docs at `/docs`.
 
 ## Available Scripts
 
-### Frontend
+### Frontend Commands
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+- `npm run dev` – start development server
+- `npm run build` – build for production
+- `npm run preview` – preview production build
+- `npm run lint` – run ESLint
+
+### Backend Commands
+
+- `uvicorn app.main:app --reload` – start development server with auto-reload
+- `uvicorn app.main:app --host 0.0.0.0 --port 8000` – run with custom host/port
 
 ## Project Structure
 
 ```text
 Kirjastokaveri/
+├── backend/           # FastAPI service
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── health.py
+│   │   ├── core/
+│   │   │   └── config.py
+│   │   └── main.py
+│   ├── requirements.txt
+│   └── README.md
 ├── frontend/          # React TypeScript frontend
 │   ├── src/
-│   │   ├── App.tsx
-│   │   ├── main.tsx
-│   │   └── index.css
-│   ├── public/
 │   └── package.json
 └── README.md
 ```
