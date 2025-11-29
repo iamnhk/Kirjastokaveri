@@ -75,6 +75,32 @@ uvicorn app.main:app --reload
 
 The API will be available at `http://localhost:8000` with docs at `/docs`.
 
+### Database & pgAdmin
+
+1. Ensure Docker Desktop is running.
+2. From the repository root, start the stack:
+
+```bash
+docker compose up -d
+```
+
+- Postgres URL: `postgresql+psycopg://kirjastokaveri:kirjastokaveri@localhost:5434/kirjastokaveri`
+- pgAdmin UI: `http://localhost:5050` (login `admin@example.com` / `admin`)
+
+- Alternative helper script (auto-check and start):
+
+```bash
+./scripts/start-stack.sh            # bash/zsh
+```
+
+- `--force` stops any running stack first.
+
+1. When finished, stop the containers:
+
+```bash
+docker compose down
+```
+
 ## Available Scripts
 
 ### Frontend Commands

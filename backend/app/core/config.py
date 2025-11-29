@@ -8,6 +8,9 @@ class Settings(BaseSettings):
 
     app_name: str = "Kirjastokaveri API"
     environment: str = "development"
+    database_url: str = (
+        "postgresql+psycopg://kirjastokaveri:kirjastokaveri@localhost:5434/kirjastokaveri"
+    )
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

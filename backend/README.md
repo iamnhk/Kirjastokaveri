@@ -24,6 +24,15 @@ uvicorn app.main:app --reload
 
 The API runs at `http://localhost:8000`. Documentation is available at `/docs` and `/redoc`.
 
+### Local database stack
+
+- Requires Docker Desktop running locally.
+- `docker compose up -d` (from repo root) boots Postgres on `localhost:5434` and pgAdmin at `http://localhost:5050` (login `admin@example.com` / `admin`).
+- Helper script: `./scripts/start-stack.sh` (bash/zsh).
+- Flags: `--force` restarts from scratch.
+- The default connection string in `.env.example` is `postgresql+psycopg://kirjastokaveri:kirjastokaveri@localhost:5434/kirjastokaveri`.
+- Stop the containers with `docker compose down` when finished.
+
 ## Project layout
 
 ```text
@@ -33,8 +42,15 @@ backend/
 │   │   └── health.py
 │   ├── core/
 │   │   └── config.py
+│   ├── db/
+│   │   ├── base.py
+│   │   ├── session.py
 │   ├── __init__.py
 │   └── main.py
+├── db/
+│   ├── README.md
+│   └── migrations/
+│       └── versions/
 ├── .env.example
 ├── .gitignore
 ├── README.md
@@ -45,3 +61,7 @@ backend/
 
 - `uvicorn app.main:app --reload` – start the development server
 - `uvicorn app.main:app --host 0.0.0.0 --port 8000` – bind to all interfaces
+- `docker compose up -d` – start Postgres (port 5434) and pgAdmin (port 5050)
+- `docker compose down` – stop the local database stack
+- `alembic revision --autogenerate -m "msg"` – create a migration based on model diffs
+- `alembic upgrade head` – apply the latest database migrations
