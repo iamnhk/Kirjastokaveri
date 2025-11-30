@@ -1,2 +1,5 @@
 export { default as AuthLayout } from './AuthLayout'
 export { default as MainLayout } from './MainLayout'
+export { default as PageHero } from './PageHero'
+export { default as PageSection } from './PageSection'
+export { usePageLayout } from './usePageLayout'

@@ -1,34 +1,68 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Outlet, useLocation } from 'react-router-dom'
+
+import { Footer, Header } from '../components'
+
+export interface PageLayoutConfig {
+  hero?: React.ReactNode
+  afterContent?: React.ReactNode
+  contentClassName?: string
+  useContentWrapper?: boolean
+}
+
+export interface LayoutControls {
+  setLayout: (config: Partial<PageLayoutConfig>) => void
+  resetLayout: () => void
+}
+
+const DEFAULT_LAYOUT: PageLayoutConfig = {
+  hero: null,
+  afterContent: null,
+  contentClassName: '',
+  useContentWrapper: false,
+}
 
 function MainLayout() {
+  const [layout, setLayout] = useState<PageLayoutConfig>(DEFAULT_LAYOUT)
+  const location = useLocation()
+
+  const setLayoutConfig = useCallback((config: Partial<PageLayoutConfig>) => {
+    setLayout((prev) => ({ ...prev, ...config }))
+  }, [])
+
+  const resetLayout = useCallback(() => {
+    setLayout(DEFAULT_LAYOUT)
+  }, [])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    resetLayout()
+  }, [location.pathname, resetLayout])
+
+  const outletContext = useMemo<LayoutControls>(
+    () => ({ setLayout: setLayoutConfig, resetLayout }),
+    [setLayoutConfig, resetLayout],
+  )
+
+  const renderedContent = layout.useContentWrapper === false
+    ? <Outlet context={outletContext} />
+    : (
+      <section className="page-section">
+        <div className={`page-section__inner ${layout.contentClassName ?? ''}`.trim()}>
+          <Outlet context={outletContext} />
+        </div>
+      </section>
+    )
+
   return (
     <div className="page-shell">
-      <header className="bg-white shadow">
-        <div className="container flex items-center justify-between py-4">
-          <NavLink to="/" className="text-lg font-semibold text-sky-600">
-            Kirjastokaveri
-          </NavLink>
-          <nav className="flex gap-sm text-sm text-slate-600">
-            <NavLink to="/browse" className={({ isActive }) => (isActive ? 'text-sky-600' : 'hover:text-sky-600')}>
-              Browse
-            </NavLink>
-            <NavLink to="/lists" className={({ isActive }) => (isActive ? 'text-sky-600' : 'hover:text-sky-600')}>
-              Lists
-            </NavLink>
-            <NavLink to="/map" className={({ isActive }) => (isActive ? 'text-sky-600' : 'hover:text-sky-600')}>
-              Map
-            </NavLink>
-          </nav>
-        </div>
-      </header>
-
+      <Header />
       <main className="page-shell__content">
-        <Outlet />
+        {layout.hero}
+        {renderedContent}
+        {layout.afterContent}
       </main>
-
-      <footer className="container mt-auto py-8 text-sm text-slate-500">
-        <p>© {new Date().getFullYear()} Kirjastokaveri. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   )
 }
