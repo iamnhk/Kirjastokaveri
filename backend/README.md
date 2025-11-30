@@ -29,7 +29,7 @@ The API runs at `http://localhost:8000`. Documentation is available at `/docs` a
 - Requires Docker Desktop running locally.
 - `docker compose up -d` (from repo root) boots Postgres on `localhost:5434` and pgAdmin at `http://localhost:5050` (login `admin@example.com` / `admin`).
 - Helper script: `./scripts/start-stack.sh` (bash/zsh).
-- Flags: `--force` restarts from scratch.
+- Flags: `--rebuild` rebuilds images, `--force` restarts from scratch.
 - The default connection string in `.env.example` is `postgresql+psycopg://kirjastokaveri:kirjastokaveri@localhost:5434/kirjastokaveri`.
 - Stop the containers with `docker compose down` when finished.
 
@@ -39,20 +39,21 @@ The API runs at `http://localhost:8000`. Documentation is available at `/docs` a
 backend/
 ├── app/
 │   ├── api/
-│   │   └── health.py
+│   │   ├── routes/
+│   │   │   └── health.py
+│   │   └── __init__.py
 │   ├── core/
 │   │   └── config.py
 │   ├── db/
 │   │   ├── base.py
-│   │   ├── session.py
+│   │   └── session.py
 │   ├── __init__.py
 │   └── main.py
-├── db/
+├── migrations/
 │   ├── README.md
-│   └── migrations/
-│       └── versions/
+│   ├── env.py
+│   └── versions/
 ├── .env.example
-├── .gitignore
 ├── README.md
 └── requirements.txt
 ```
