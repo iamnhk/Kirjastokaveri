@@ -10,6 +10,9 @@ from sqlalchemy import engine_from_config, pool
 from app.core.config import get_settings
 from app.db import Base
 
+# Import all models to register them with Base metadata
+from app.models import Library, Notification, Reservation, User, WishlistItem
+
 # Interpret the config file for Python logging.
 config = context.config
 if config.config_file_name:
