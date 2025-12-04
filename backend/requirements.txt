@@ -1,6 +1,22 @@
 fastapi==0.115.5
 uvicorn[standard]==0.34.0
 pydantic-settings==2.4.0
+pydantic>=2.10.0
 SQLAlchemy==2.0.44
 alembic==1.17.2
 psycopg[binary]==3.2.13
+
+# Authentication
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+bcrypt>=4.0.0
+
+# HTTP client and caching
+httpx==0.28.1
+redis>=5.0.0
+
+# HTML parsing for cover images
+beautifulsoup4>=4.12.0
+
+# Scheduling for background tasks
+APScheduler>=3.10.0
