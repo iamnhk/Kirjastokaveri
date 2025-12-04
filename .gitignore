@@ -36,3 +36,17 @@ docs/development-plan.md
 
 # Reference playgrounds (ignored)
 reference/
+
+# Backend generated files
+backend/nohup.out
+backend/__pycache__/
+backend/**/__pycache__/
+*.pyc
+
+# Playwright test artifacts
+frontend/playwright-report/
+frontend/test-results/
+frontend/test-output.txt
+
+# MCP plugin cache
+.playwright-mcp/
