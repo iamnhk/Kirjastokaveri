@@ -5,6 +5,7 @@ pydantic>=2.10.0
 SQLAlchemy==2.0.44
 alembic==1.17.2
 psycopg[binary]==3.2.13
+psycopg2-binary==2.9.10
 
 # Authentication
 python-jose[cryptography]>=3.3.0
