@@ -171,6 +171,12 @@ async def search_books(
             filters=filter_params,
             facet_fields=FACET_FIELDS,
         )
+    except httpx.HTTPStatusError as exc:
+        # Surface the upstream status for easier debugging in production
+        raise HTTPException(
+            status_code=exc.response.status_code,
+            detail=f"Finna upstream error: {exc.response.text[:200]}"
+        ) from exc
     except Exception as exc:
         raise HTTPException(
             status_code=502, detail="Failed to execute Finna search"

@@ -31,8 +31,13 @@ class FinnaService:
     async def _request(self, endpoint: str, params: dict[str, Any]) -> Any:
         """Make an async HTTP request to the Finna API."""
         url = f"{self._base_url}{endpoint}"
+        headers = {
+            "User-Agent": "Kirjastokaveri/1.0 (+https://kirjastokaveri-frontend.onrender.com)",
+            "Accept": "application/json",
+        }
         async with httpx.AsyncClient(
-            timeout=self._settings.request_timeout_seconds
+            timeout=self._settings.request_timeout_seconds,
+            headers=headers,
         ) as client:
             response = await client.get(url, params=params)
             response.raise_for_status()
