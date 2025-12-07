@@ -39,7 +39,7 @@ services:
     plan: free
     envVars:
       - key: VITE_API_URL
-        value: https://kirjastokaveri-backend.onrender.com
+        value: https://kirjastokaveri-backend.onrender.com/api
     autoDeploy: true
 
 databases:
