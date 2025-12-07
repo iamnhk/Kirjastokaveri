@@ -38,11 +38,11 @@ services:
     dockerContext: ./frontend
     plan: free
     envVars:
-      - key: VITE_API_BASE_URL
+      - key: VITE_API_URL
         fromService:
           type: web
           name: kirjastokaveri-backend
-          property: host
+          property: url
     autoDeploy: true
 
 databases:

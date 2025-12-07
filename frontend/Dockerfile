@@ -13,8 +13,8 @@ RUN npm ci
 COPY . .
 
 # Build the app (ARG allows build-time env vars)
-ARG VITE_API_BASE_URL
-ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 
 RUN npm run build
 

@@ -6,7 +6,7 @@
  * which uses data from Kirjastot.fi (972+ Finnish libraries with GPS coordinates).
  */
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 export interface Coordinates {
   latitude: number;
