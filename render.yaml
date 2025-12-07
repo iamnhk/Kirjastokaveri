@@ -21,7 +21,7 @@ services:
       - key: KIRJASTO_ENVIRONMENT
         value: production
       - key: KIRJASTO_CORS_ALLOW_ORIGINS
-        value: '["https://kirjastokaveri-frontend.onrender.com"]'
+        value: '["https://kirjastokaveri-frontend.onrender.com","https://kirjastokaveri-frontend.onrender.com/"]'
       - key: KIRJASTO_FINNA_BASE_URL
         value: https://api.finna.fi
       - key: KIRJASTO_SCHEDULER_ENABLED
