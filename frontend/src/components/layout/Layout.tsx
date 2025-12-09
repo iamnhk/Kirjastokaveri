@@ -43,7 +43,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   };
 
   const containerClass = themeClassName(theme, {
-    base: `max-w-[1400px] mx-auto bg-gradient-to-b ${currentTheme.gradient} md:rounded-t-3xl overflow-hidden md:border-t md:border-x ${currentTheme.border}`,
+    base: `max-w-[1400px] mx-auto bg-gradient-to-b ${currentTheme.gradient} md:rounded-t-xl overflow-hidden md:border-t md:border-x ${currentTheme.border}`,
     light: 'md:shadow-xl md:shadow-purple-200/50',
     dark: 'md:shadow-2xl',
   });
@@ -88,7 +88,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <div className={`min-h-screen ${currentTheme.bg} md:pt-8 md:px-8 pb-20 md:pb-0`}>
         <div className={containerClass}>
           {/* Desktop Navigation - Hidden on mobile */}
-          <nav className={`hidden md:flex relative z-10 items-center justify-between px-12 py-6 ${currentTheme.cardBg}/80 backdrop-blur-md border-b ${currentTheme.border}`}>
+          <nav className={themeClassName(theme, {
+            base: 'hidden md:flex relative z-10 items-center justify-between px-12 py-6 backdrop-blur-md border-b',
+            light: 'bg-white/95 border-slate-200',
+            dark: 'bg-slate-900 border-slate-800/50',
+          })}>
             <Link to="/" className="flex items-center gap-3 group">
               <BookOpen
                 className={themeClassName(theme, {

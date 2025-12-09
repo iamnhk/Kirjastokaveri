@@ -67,12 +67,6 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
     dark: 'bg-gradient-to-br from-purple-600 to-pink-600',
   });
 
-  const demoNoteClass = themeClassName(theme, {
-    base: 'text-center p-3 rounded-lg',
-    light: 'bg-purple-50',
-    dark: 'bg-slate-800/50',
-  });
-
   const tabButtonClass = (isActive: boolean) =>
     isActive ? activeTabClass : `${currentTheme.textMuted} hover:${currentTheme.text}`;
 
@@ -132,8 +126,8 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={`${currentTheme.cardBg} ${currentTheme.border} max-w-md p-0 overflow-hidden`}>
-        <div className={`${headerGradientClass} ${currentTheme.border}`}>
+      <DialogContent className={`${currentTheme.cardBg} ${currentTheme.border} max-w-md p-0 flex flex-col`} hideCloseButton>
+        <div className={`${headerGradientClass} ${currentTheme.border} flex-shrink-0`}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className={logoBadgeClass}>
@@ -151,10 +145,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
             <button
               type="button"
               onClick={onClose}
-              className={`rounded-full p-1 transition-colors ${currentTheme.border} ${currentTheme.hover}`}
+              className={`rounded-full p-1.5 transition-colors ${currentTheme.hover}`}
+              aria-label="Close"
             >
-              <span className="sr-only">Close</span>
-              <X className={`h-4 w-4 ${currentTheme.textMuted}`} />
+              <X className={`h-5 w-5 ${currentTheme.textMuted}`} />
             </button>
           </div>
 
@@ -175,7 +169,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
         </div>
 
         {activeTab === 'login' && (
-          <form onSubmit={handleLogin} className="p-6 space-y-4">
+          <form onSubmit={handleLogin} className="p-6 space-y-4 overflow-y-auto flex-1">
             <div className="space-y-2">
               <Label htmlFor="login-email" className={currentTheme.text}>
                 Email
@@ -232,17 +226,11 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
                 'Sign In'
               )}
             </Button>
-
-            <div className={demoNoteClass}>
-              <p className={`${currentTheme.textMuted} text-xs`}>
-                Demo: Use any email and password to login
-              </p>
-            </div>
           </form>
         )}
 
         {activeTab === 'signup' && (
-          <form onSubmit={handleSignup} className="p-6 space-y-4">
+          <form onSubmit={handleSignup} className="p-6 space-y-4 overflow-y-auto flex-1">
             <div className="space-y-2">
               <Label htmlFor="signup-name" className={currentTheme.text}>
                 Full Name
@@ -325,12 +313,6 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
                 'Create Account'
               )}
             </Button>
-
-            <div className={demoNoteClass}>
-              <p className={`${currentTheme.textMuted} text-xs`}>
-                Demo: Enter any details to create an account
-              </p>
-            </div>
           </form>
         )}
       </DialogContent>

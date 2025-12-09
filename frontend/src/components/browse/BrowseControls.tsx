@@ -247,12 +247,12 @@ export function BrowseControls({
                   selectedAvailability === option
                     ? themeClassName(theme, {
                         base: availabilityChipBase,
-                        light: 'bg-purple-600 text-white shadow-md',
-                        dark: 'bg-purple-600 text-white',
+                        light: 'bg-blue-600 text-white shadow-md',
+                        dark: 'bg-blue-600 text-white',
                       })
                     : themeClassName(theme, {
                         base: availabilityChipBase,
-                        light: 'bg-purple-50 text-slate-700 hover:bg-purple-100',
+                        light: 'bg-blue-50 text-slate-700 hover:bg-blue-100',
                         dark: 'bg-slate-800/60 text-slate-300 hover:bg-slate-700/60',
                       })
                 }

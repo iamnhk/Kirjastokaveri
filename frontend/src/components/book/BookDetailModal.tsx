@@ -109,7 +109,7 @@ export function BookDetailModal({ book, isOpen, onClose, onAddToList, onTrackLib
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={`${currentTheme.cardBg} ${currentTheme.border} max-w-4xl max-h-[90vh] overflow-y-auto p-0`}>
+      <DialogContent className={`${currentTheme.cardBg} ${currentTheme.border} max-w-4xl max-h-[90vh] overflow-y-auto p-0`} hideCloseButton>
         <DialogTitle className="sr-only">{book.title}</DialogTitle>
         <DialogDescription className="sr-only">
           Detailed information about {book.title} by {book.author}, including availability at Finnish libraries
@@ -118,10 +118,10 @@ export function BookDetailModal({ book, isOpen, onClose, onAddToList, onTrackLib
         <div className="relative">
           <button
             onClick={onClose}
-            className={`absolute top-6 right-6 z-50 p-3 rounded-full ${theme === 'light' ? 'bg-white hover:bg-gray-100 shadow-md' : 'bg-slate-700 hover:bg-slate-600 shadow-xl'} ${currentTheme.border} border transition-all hover:scale-110`}
+            className={`absolute top-4 right-4 z-50 p-2 rounded-full ${theme === 'light' ? 'bg-white hover:bg-gray-100 shadow-md' : 'bg-slate-700 hover:bg-slate-600 shadow-xl'} ${currentTheme.border} border transition-all hover:scale-110`}
             aria-label="Close modal"
           >
-            <X className={`w-6 h-6 ${currentTheme.text}`} />
+            <X className={`w-5 h-5 ${currentTheme.text}`} />
           </button>
 
           <div className={`border-b ${currentTheme.border} px-6 pt-6`}>

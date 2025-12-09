@@ -33,58 +33,78 @@ export function Browse() {
   const browsePageClass = useMemo(
     () =>
       themeClassName(theme, {
-        light: 'bg-[radial-gradient(circle_at_top,_rgba(123,97,255,0.12),_rgba(0,0,0,0))] text-slate-900',
-        dark: 'bg-slate-950 text-slate-100',
+        light: currentTheme.sectionBg,
+        dark: currentTheme.sectionBg,
       }),
-    [theme]
+    [theme, currentTheme.sectionBg]
+  );
+
+  const headingClass = useMemo(
+    () =>
+      themeClassName(theme, {
+        base: 'text-2xl md:text-4xl mb-2 md:mb-4',
+        light: currentTheme.text,
+        dark: currentTheme.text,
+      }),
+    [theme, currentTheme.text]
+  );
+
+  const subtitleClass = useMemo(
+    () =>
+      themeClassName(theme, {
+        base: 'text-sm md:text-base',
+        light: currentTheme.textMuted,
+        dark: currentTheme.textMuted,
+      }),
+    [theme, currentTheme.textMuted]
   );
 
   return (
     <Layout>
-      <div className={`min-h-screen pb-24 ${browsePageClass}`}>
-        <div className="relative mx-auto w-full max-w-6xl px-4 pt-24 md:px-6 lg:px-8">
-          <div className="relative z-10 space-y-12">
-            <BrowseControls
-              inputValue={search.inputValue}
-              onInputChange={search.setInput}
-              onSearch={search.submit}
-              isLoading={search.isLoading}
-              genres={filters.genres}
-              selectedGenre={filters.selectedGenre}
-              onSelectGenre={filters.selectGenre}
-              availabilityOptions={filters.availabilityOptions}
-              selectedAvailability={filters.selectedAvailability}
-              onSelectAvailability={filters.selectAvailability}
-              isLoadingLocation={location.isLoading}
-              requestLocation={location.request}
-              locationPermissionGranted={location.permissionGranted}
-              isUsingFallbackLocation={location.isUsingFallbackLocation}
-              userLocation={location.userLocation}
-            />
-
-            <BrowseErrorAlert theme={theme} message={search.error} />
-            <BrowseEmptyState theme={theme} currentTheme={currentTheme} visible={search.showEmptyState} />
-            <BrowseLoadingState currentTheme={currentTheme} visible={search.isLoading} />
-
-            {view.showResults && (
-              <BrowseResultsSection
-                currentTheme={currentTheme}
-                filteredBooks={search.filteredBooks}
-                displayBooks={search.displayBooks}
-                searchQuery={search.query}
-                getClosestAvailableLocation={location.getClosestAvailableLocation}
-                isInWishlist={wishlist.isInWishlist}
-                onSelectBook={modals.detail.setBook}
-                onAddToWishlist={wishlist.add}
-              />
-            )}
-
-            <BrowseFilteredEmptyState theme={theme} currentTheme={currentTheme} show={view.showFilteredEmpty} />
-            <BrowseNoSearchResults currentTheme={currentTheme} show={view.showNoSearchResults} />
-          </div>
+      <div className={`px-4 md:px-12 py-6 md:py-12 ${browsePageClass}`}>
+        {/* Header */}
+        <div className="mb-6 md:mb-12">
+          <h1 className={headingClass}>Browse Books</h1>
+          <p className={subtitleClass}>Search and explore books from Finnish libraries</p>
         </div>
 
-        <BrowseBackdrop />
+        <BrowseControls
+          inputValue={search.inputValue}
+          onInputChange={search.setInput}
+          onSearch={search.submit}
+          isLoading={search.isLoading}
+          genres={filters.genres}
+          selectedGenre={filters.selectedGenre}
+          onSelectGenre={filters.selectGenre}
+          availabilityOptions={filters.availabilityOptions}
+          selectedAvailability={filters.selectedAvailability}
+          onSelectAvailability={filters.selectAvailability}
+          isLoadingLocation={location.isLoading}
+          requestLocation={location.request}
+          locationPermissionGranted={location.permissionGranted}
+          isUsingFallbackLocation={location.isUsingFallbackLocation}
+          userLocation={location.userLocation}
+        />
+
+        <BrowseErrorAlert theme={theme} message={search.error} />
+        <BrowseEmptyState theme={theme} currentTheme={currentTheme} visible={search.showEmptyState} />
+        <BrowseLoadingState currentTheme={currentTheme} visible={search.isLoading} />
+
+        {view.showResults && (
+          <BrowseResultsSection
+            currentTheme={currentTheme}
+            filteredBooks={search.filteredBooks}
+            displayBooks={search.displayBooks}
+            searchQuery={search.query}
+            getClosestAvailableLocation={location.getClosestAvailableLocation}
+            isInWishlist={wishlist.isInWishlist}
+            onSelectBook={modals.detail.setBook}
+            onAddToWishlist={wishlist.add}
+          />
+        )}
+
+        <BrowseFilteredEmptyState theme={theme} currentTheme={currentTheme} show={view.showFilteredEmpty} />
+        <BrowseNoSearchResults currentTheme={currentTheme} show={view.showNoSearchResults} />
       </div>
 
       <Suspense fallback={null}>
@@ -100,7 +120,7 @@ export function Browse() {
             onAddToList={wishlist.add}
             onTrackLibraries={(book, selectedLibraries) => {
               wishlist.trackLibraries(book, selectedLibraries);
-              detail.setBook(null); // Close the detail modal after tracking
+              detail.setBook(null);
             }}
           />
         )}
@@ -121,13 +141,3 @@ export function Browse() {
 }
 
 export default Browse;
-
-function BrowseBackdrop() {
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute left-1/2 top-40 h-[580px] w-[720px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,_rgba(123,97,255,0.18)_0%,_rgba(123,97,255,0)_70%)] blur-3xl" />
-      <div className="absolute bottom-0 left-0 h-[360px] w-[360px] -translate-x-1/3 translate-y-1/3 rounded-full bg-[radial-gradient(circle,_rgba(66,226,196,0.12)_0%,_rgba(66,226,196,0)_70%)] blur-3xl" />
-      <div className="absolute bottom-12 right-0 h-[420px] w-[420px] translate-x-1/3 rounded-full bg-[radial-gradient(circle,_rgba(123,97,255,0.12)_0%,_rgba(123,97,255,0)_70%)] blur-3xl" />
-    </div>
-  );
-}
