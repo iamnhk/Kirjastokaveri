@@ -58,8 +58,8 @@ export function BrowseEmptyState({ theme, currentTheme, visible }: BrowseEmptySt
         <BookOpen
           className={themeClassName(theme, {
             base: 'w-12 h-12 md:w-16 md:h-16',
-            light: 'text-blue-600',
-            dark: 'text-cyan-400',
+            light: 'text-purple-600',
+            dark: 'text-purple-400',
           })}
         />
       </div>
@@ -154,8 +154,8 @@ export function BrowseFilteredEmptyState({ theme, currentTheme, show }: BrowseFi
       <p
         className={themeClassName(theme, {
           base: 'mt-4 text-sm',
-          light: 'text-blue-600',
-          dark: 'text-blue-300',
+          light: 'text-purple-600',
+          dark: 'text-purple-300',
         })}
       >
         Tip: Clear filters to see all results again.

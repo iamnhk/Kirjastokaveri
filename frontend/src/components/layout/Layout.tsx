@@ -44,38 +44,38 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   const containerClass = themeClassName(theme, {
     base: `max-w-[1400px] mx-auto bg-gradient-to-b ${currentTheme.gradient} md:rounded-t-3xl overflow-hidden md:border-t md:border-x ${currentTheme.border}`,
-    light: 'md:shadow-xl md:shadow-blue-200/50',
+    light: 'md:shadow-xl md:shadow-purple-200/50',
     dark: 'md:shadow-2xl',
   });
 
   const themeToggleClass = themeClassName(theme, {
     base: 'transition-colors',
-    light: 'bg-white/80 border-blue-200 text-blue-600 hover:bg-blue-50',
+    light: 'bg-white/80 border-purple-200 text-purple-600 hover:bg-purple-50',
     dark: `${currentTheme.cardBg}/60 ${currentTheme.border} ${currentTheme.text} hover:${currentTheme.cardBg}`,
   });
 
   const signInButtonClass = themeClassName(theme, {
     base: `bg-gradient-to-r ${currentTheme.buttonGradient} hover:${currentTheme.buttonGradientHover} shadow-lg`,
-    light: 'shadow-blue-300/50',
-    dark: 'shadow-blue-500/30',
+    light: 'shadow-purple-300/50',
+    dark: 'shadow-purple-500/30',
   });
 
   const avatarRingClass = themeClassName(theme, {
     base: 'w-9 h-9 ring-2 cursor-pointer',
-    light: 'ring-blue-300/50',
+    light: 'ring-purple-300/50',
     dark: 'ring-white/20',
   });
 
   const avatarFallbackClass = themeClassName(theme, {
     base: '',
-    light: 'bg-gradient-to-r from-blue-600 to-cyan-600',
+    light: 'bg-gradient-to-r from-purple-600 to-pink-600',
     dark: 'bg-blue-600',
   });
 
   const navHighlightClass = themeClassName(theme, {
     base: 'absolute -bottom-6 left-0 right-0 h-0.5',
-    light: 'bg-gradient-to-r from-blue-600 to-cyan-600',
-    dark: 'bg-blue-500',
+    light: 'bg-gradient-to-r from-purple-600 to-pink-600',
+    dark: 'bg-purple-500',
   });
 
   return (
@@ -93,7 +93,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <BookOpen
                 className={themeClassName(theme, {
                   base: 'w-7 h-7',
-                  light: 'text-blue-600',
+                  light: 'text-purple-600',
                   dark: currentTheme.text,
                 })}
               />
@@ -147,7 +147,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                       className="cursor-pointer hover:bg-slate-200"
                     >
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full bg-gradient-to-r from-cyan-400 to-cyan-400"></div>
+                        <div className="w-4 h-4 rounded-full bg-gradient-to-r from-purple-400 to-pink-400"></div>
                         <span>Light</span>
                       </div>
                     </DropdownMenuItem>

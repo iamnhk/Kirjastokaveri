@@ -47,7 +47,7 @@ export function MobileHeader() {
       <div className="flex items-center justify-between px-4 h-16">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <BookOpen className={`w-6 h-6 ${theme === 'light' ? 'text-blue-600' : 'text-cyan-400'}`} />
+          <BookOpen className={`w-6 h-6 ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`} />
           <span className={`${currentTheme.text} font-medium`}>Kirjastokaveri</span>
         </div>
 
@@ -89,8 +89,8 @@ export function MobileHeader() {
                       <AvatarFallback
                         className={`${
                           theme === 'light'
-                            ? 'bg-gradient-to-br from-blue-600 to-cyan-600'
-                            : 'bg-gradient-to-br from-blue-700 to-cyan-700'
+                            ? 'bg-gradient-to-br from-purple-600 to-pink-600'
+                            : 'bg-gradient-to-br from-purple-600 to-pink-600'
                         } text-white text-sm`}
                       >
                         {user?.name
@@ -114,15 +114,15 @@ export function MobileHeader() {
                     {/* User Profile */}
                     <div
                       className={`flex items-center gap-3 p-4 rounded-lg ${
-                        theme === 'light' ? 'bg-blue-50' : 'bg-slate-800/50'
+                        theme === 'light' ? 'bg-purple-50' : 'bg-slate-800/50'
                       }`}
                     >
                       <Avatar className="h-12 w-12">
                         <AvatarFallback
                           className={`${
                             theme === 'light'
-                              ? 'bg-gradient-to-br from-blue-600 to-cyan-600'
-                              : 'bg-gradient-to-br from-blue-700 to-cyan-700'
+                              ? 'bg-gradient-to-br from-purple-600 to-pink-600'
+                              : 'bg-gradient-to-br from-purple-600 to-pink-600'
                           } text-white`}
                         >
                           {user?.name
@@ -146,7 +146,7 @@ export function MobileHeader() {
                           variant={theme === 'light' ? 'default' : 'outline'}
                           onClick={() => setTheme('light')}
                           className={`justify-start ${
-                            theme === 'light' ? 'bg-gradient-to-r from-blue-600 to-cyan-600' : ''
+                            theme === 'light' ? 'bg-gradient-to-r from-purple-600 to-pink-600' : ''
                           }`}
                         >
                           <Palette className="w-4 h-4 mr-2" />
@@ -156,7 +156,7 @@ export function MobileHeader() {
                           variant={theme === 'dark' ? 'default' : 'outline'}
                           onClick={() => setTheme('dark')}
                           className={`justify-start ${
-                            theme === 'dark' ? 'bg-blue-600' : ''
+                            theme === 'dark' ? 'bg-purple-600' : ''
                           }`}
                         >
                           <Palette className="w-4 h-4 mr-2" />
@@ -204,7 +204,7 @@ export function MobileHeader() {
                           variant={theme === 'light' ? 'default' : 'outline'}
                           onClick={() => setTheme('light')}
                           className={`justify-start ${
-                            theme === 'light' ? 'bg-gradient-to-r from-blue-600 to-cyan-600' : ''
+                            theme === 'light' ? 'bg-gradient-to-r from-purple-600 to-pink-600' : ''
                           }`}
                         >
                           <Palette className="w-4 h-4 mr-2" />
@@ -214,7 +214,7 @@ export function MobileHeader() {
                           variant={theme === 'dark' ? 'default' : 'outline'}
                           onClick={() => setTheme('dark')}
                           className={`justify-start ${
-                            theme === 'dark' ? 'bg-blue-600' : ''
+                            theme === 'dark' ? 'bg-purple-600' : ''
                           }`}
                         >
                           <Palette className="w-4 h-4 mr-2" />
@@ -231,8 +231,8 @@ export function MobileHeader() {
                       }}
                       className={`w-full ${
                         theme === 'light'
-                          ? 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700'
-                          : 'bg-blue-600 hover:bg-blue-700'
+                          ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                          : 'bg-purple-600 hover:bg-purple-700'
                       }`}
                     >
                       <User className="w-4 h-4 mr-2" />

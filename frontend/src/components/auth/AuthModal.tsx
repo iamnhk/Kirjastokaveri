@@ -39,8 +39,8 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
   const authButtonClass = themeClassName(theme, {
     base: `w-full bg-gradient-to-r ${currentTheme.buttonGradient} hover:${currentTheme.buttonGradientHover} h-11 rounded-lg shadow-lg transition-all`,
-    light: 'shadow-blue-300/50',
-    dark: 'shadow-blue-500/30',
+    light: 'shadow-purple-300/50',
+    dark: 'shadow-purple-500/30',
   });
 
   const tabWrapperClass = themeClassName(theme, {
@@ -51,25 +51,25 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
   const activeTabClass = themeClassName(theme, {
     base: 'bg-gradient-to-r text-white shadow-lg',
-    light: 'from-blue-600 to-cyan-600',
-    dark: 'from-blue-500 to-blue-500',
+    light: 'from-purple-600 to-pink-600',
+    dark: 'from-purple-600 to-pink-600',
   });
 
   const headerGradientClass = themeClassName(theme, {
     base: 'p-6 border-b',
-    light: 'bg-gradient-to-r from-blue-50 to-cyan-50',
+    light: 'bg-gradient-to-r from-purple-50 to-pink-50',
     dark: 'bg-gradient-to-r from-slate-800 to-slate-900',
   });
 
   const logoBadgeClass = themeClassName(theme, {
     base: 'p-2 rounded-xl',
-    light: 'bg-gradient-to-br from-blue-600 to-cyan-600',
-    dark: 'bg-gradient-to-br from-blue-500 to-blue-500',
+    light: 'bg-gradient-to-br from-purple-600 to-pink-600',
+    dark: 'bg-gradient-to-br from-purple-600 to-pink-600',
   });
 
   const demoNoteClass = themeClassName(theme, {
     base: 'text-center p-3 rounded-lg',
-    light: 'bg-blue-50',
+    light: 'bg-purple-50',
     dark: 'bg-slate-800/50',
   });
 

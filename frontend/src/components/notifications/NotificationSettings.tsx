@@ -41,10 +41,10 @@ export function NotificationSettings({ onBack }: NotificationSettingsProps) {
 
       <Separator className={currentTheme.border} />
 
-      <Card className={`p-4 ${theme === 'light' ? 'bg-blue-50 border-blue-200' : 'bg-slate-800 border-slate-700'}`}>
+      <Card className={`p-4 ${theme === 'light' ? 'bg-purple-50 border-purple-200' : 'bg-slate-800 border-slate-700'}`}>
         <div className="flex items-start gap-3">
-          <div className={`p-2 rounded-lg ${theme === 'light' ? 'bg-blue-100' : 'bg-blue-500/20'}`}>
-            <BellRing className={`w-5 h-5 ${theme === 'light' ? 'text-blue-600' : 'text-cyan-400'}`} />
+          <div className={`p-2 rounded-lg ${theme === 'light' ? 'bg-purple-100' : 'bg-purple-500/20'}`}>
+            <BellRing className={`w-5 h-5 ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`} />
           </div>
           <div className="flex-1">
             <div className="flex items-center justify-between mb-2">

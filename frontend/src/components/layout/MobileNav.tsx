@@ -41,8 +41,8 @@ export function MobileNav() {
               className={`flex flex-col items-center justify-center gap-1 transition-colors ${
                 active
                   ? theme === 'light'
-                    ? 'text-blue-600'
-                    : 'text-cyan-400'
+                    ? 'text-purple-600'
+                    : 'text-purple-400'
                   : currentTheme.textMuted
               }`}
             >

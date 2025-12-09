@@ -94,7 +94,7 @@ export function BrowseControls({
             onChange={handleInputChange}
             onKeyDown={handleKeyPress}
             className={themeClassName(theme, {
-              base: `pl-10 md:pl-12 ${currentTheme.inputBg} backdrop-blur-sm ${currentTheme.inputBorder} ${currentTheme.text} placeholder:text-slate-400 h-12 md:h-14 rounded-xl focus-visible:ring-1 focus-visible:ring-blue-500/50`,
+              base: `pl-10 md:pl-12 ${currentTheme.inputBg} backdrop-blur-sm ${currentTheme.inputBorder} ${currentTheme.text} placeholder:text-slate-400 h-12 md:h-14 rounded-xl focus-visible:ring-1 focus-visible:ring-purple-500/50`,
               light: 'shadow-md',
               dark: '',
             })}
@@ -105,7 +105,7 @@ export function BrowseControls({
           disabled={isLoading || !inputValue.trim()}
           className={themeClassName(theme, {
             base: `bg-gradient-to-r ${currentTheme.buttonGradient} hover:${currentTheme.buttonGradientHover} h-12 md:h-14 px-6 md:px-8 rounded-xl shadow-lg`,
-            light: 'shadow-blue-300/50',
+            light: 'shadow-purple-300/50',
             dark: '',
           })}
         >
@@ -211,12 +211,12 @@ export function BrowseControls({
                   selectedGenre === genre
                     ? themeClassName(theme, {
                         base: genreChipBase,
-                        light: 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md',
-                        dark: 'bg-blue-600 text-white',
+                        light: 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md',
+                        dark: 'bg-purple-600 text-white',
                       })
                     : themeClassName(theme, {
                         base: genreChipBase,
-                        light: 'bg-blue-50 text-slate-700 hover:bg-blue-100',
+                        light: 'bg-purple-50 text-slate-700 hover:bg-purple-100',
                         dark: 'bg-slate-800/60 text-slate-300 hover:bg-slate-700/60',
                       })
                 }
@@ -247,12 +247,12 @@ export function BrowseControls({
                   selectedAvailability === option
                     ? themeClassName(theme, {
                         base: availabilityChipBase,
-                        light: 'bg-blue-600 text-white shadow-md',
-                        dark: 'bg-blue-600 text-white',
+                        light: 'bg-purple-600 text-white shadow-md',
+                        dark: 'bg-purple-600 text-white',
                       })
                     : themeClassName(theme, {
                         base: availabilityChipBase,
-                        light: 'bg-blue-50 text-slate-700 hover:bg-blue-100',
+                        light: 'bg-purple-50 text-slate-700 hover:bg-purple-100',
                         dark: 'bg-slate-800/60 text-slate-300 hover:bg-slate-700/60',
                       })
                 }

@@ -63,8 +63,8 @@ export function Signup() {
             <div
               className={themeClassName(theme, {
                 base: 'p-3 rounded-2xl',
-                light: 'bg-gradient-to-br from-blue-600 to-cyan-600',
-                dark: 'bg-gradient-to-br from-blue-500 to-blue-500',
+                light: 'bg-gradient-to-br from-purple-600 to-pink-600',
+                dark: 'bg-gradient-to-br from-purple-600 to-pink-600',
               })}
             >
               <BookOpen className="w-8 h-8 text-white" />
@@ -166,8 +166,8 @@ export function Signup() {
               disabled={isLoading}
               className={themeClassName(theme, {
                 base: `w-full bg-gradient-to-r ${currentTheme.buttonGradient} hover:${currentTheme.buttonGradientHover} h-12 rounded-xl shadow-lg transition-all`,
-                light: 'shadow-blue-300/50',
-                dark: 'shadow-blue-500/30',
+                light: 'shadow-purple-300/50',
+                dark: 'shadow-purple-500/30',
               })}
             >
               {isLoading ? (
