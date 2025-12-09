@@ -50,8 +50,8 @@ export function BookResultCard({
 
   const subjectBadgeClass = themeClassName(theme, {
     base: 'mb-2 text-xs',
-    light: 'border-blue-300 text-blue-700',
-    dark: 'border-slate-700 text-slate-400',
+    light: 'border-purple-300 text-purple-700',
+    dark: 'border-slate-700 text-purple-300',
   });
 
   const distanceIconClass = themeClassName(theme, {
@@ -68,13 +68,15 @@ export function BookResultCard({
 
   const wishlistButtonClass = themeClassName(theme, {
     base: `w-full border text-xs md:text-sm py-2 rounded-lg flex items-center justify-center gap-2 ${isInWishlist ? 'opacity-60 cursor-default hover:bg-transparent' : ''}`,
-    light: 'bg-white border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300',
+    light: 'bg-white border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300',
     dark: 'bg-slate-800/40 border-slate-700/50 text-white hover:bg-slate-700/60 hover:border-slate-600',
   });
 
+  const FALLBACK = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600"%3E%3Cdefs%3E%3ClinearGradient id="grad" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:rgb(147,51,234);stop-opacity:1" /%3E%3Cstop offset="100%25" style="stop-color:rgb(219,39,119);stop-opacity:1" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="400" height="600" fill="url(%23grad)"/%3E%3Ctext x="200" y="280" font-family="Arial, sans-serif" font-size="48" fill="white" text-anchor="middle"%3E📚%3C/text%3E%3Ctext x="200" y="340" font-family="Arial, sans-serif" font-size="20" fill="white" text-anchor="middle" opacity="0.9"%3ENo Cover%3C/text%3E%3Ctext x="200" y="370" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle" opacity="0.7"%3EAvailable%3C/text%3E%3C/svg%3E';
+
   return (
     <BookCard
-      image={book.imageUrl}
+      image={book.imageUrl || FALLBACK}
       title={book.title}
       onClick={handleCardClick}
       shadow="raised"

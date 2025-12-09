@@ -36,7 +36,7 @@ export function HomeHeroSection({
   return (
     <div
       className={`relative overflow-hidden bg-gradient-to-br ${
-        theme === 'light' ? currentTheme.heroBg : 'from-blue-950 via-slate-900 to-slate-900'
+        theme === 'light' ? currentTheme.heroBg : 'from-purple-950 via-slate-900 to-slate-900'
       }`}
     >
       <div className={`absolute inset-0 ${theme === 'light' ? 'opacity-20' : 'opacity-40'}`}>
@@ -57,7 +57,7 @@ export function HomeHeroSection({
         className={`absolute inset-0 ${
           theme === 'light'
             ? 'bg-gradient-to-b from-white/80 via-white/70 to-white/90'
-            : 'bg-gradient-to-b from-blue-950/90 via-slate-900/85 to-slate-900/95'
+            : 'bg-gradient-to-b from-purple-950/90 via-slate-900/85 to-slate-900/95'
         }`}
       />
 
@@ -80,7 +80,7 @@ export function HomeHeroSection({
             <div className="hidden md:flex flex-col gap-3 text-left">
               <div
                 className={`flex items-center gap-2 ${
-                  theme === 'light' ? 'text-blue-700' : 'text-white/70'
+                  theme === 'light' ? 'text-purple-700' : 'text-white/70'
                 } text-sm`}
               >
                 <BookOpen className="w-4 h-4" />
@@ -88,7 +88,7 @@ export function HomeHeroSection({
               </div>
               <div
                 className={`flex items-center gap-2 ${
-                  theme === 'light' ? 'text-blue-700' : 'text-white/70'
+                  theme === 'light' ? 'text-purple-700' : 'text-white/70'
                 } text-sm`}
               >
                 <Shield className="w-4 h-4" />
@@ -99,7 +99,7 @@ export function HomeHeroSection({
             <div className="flex flex-col md:flex-row gap-3 w-full md:flex-1">
               <Input
                 placeholder="Find your next adventure..."
-                className={`w-full ${currentTheme.inputBg} backdrop-blur-sm ${currentTheme.inputBorder} ${currentTheme.text} placeholder:text-slate-400 h-12 md:h-14 px-4 md:px-6 rounded-full focus-visible:ring-1 focus-visible:ring-blue-500/50 ${
+                className={`w-full ${currentTheme.inputBg} backdrop-blur-sm ${currentTheme.inputBorder} ${currentTheme.text} placeholder:text-slate-400 h-12 md:h-14 px-4 md:px-6 rounded-full focus-visible:ring-1 focus-visible:ring-purple-500/50 ${
                   theme === 'light' ? 'shadow-md' : ''
                 }`}
                 value={searchQuery}
@@ -108,7 +108,7 @@ export function HomeHeroSection({
               />
               <Button
                 className={`bg-gradient-to-r ${currentTheme.buttonGradient} hover:${currentTheme.buttonGradientHover} h-12 md:h-14 px-8 md:px-10 rounded-full shadow-lg ${
-                  theme === 'light' ? 'shadow-blue-300/50' : 'shadow-blue-500/30'
+                  theme === 'light' ? 'shadow-purple-300/50' : 'shadow-purple-500/30'
                 } w-full md:w-auto`}
                 onClick={onSearch}
               >
@@ -138,20 +138,20 @@ export function HomeFeaturesSection({ theme, currentTheme, features }: HomeFeatu
             key={feature.title}
             className={`${
               theme === 'light'
-                ? 'bg-blue-50/50 border-blue-200'
+                ? 'bg-purple-50/50 border-purple-200'
                 : 'bg-slate-800/30 border-slate-700/30 hover:border-slate-600/50'
             } backdrop-blur-sm rounded-xl md:rounded-2xl p-4 md:p-8 text-center border transition-all duration-300 ${
-              theme === 'light' ? 'hover:shadow-lg hover:shadow-blue-200/50' : ''
+              theme === 'light' ? 'hover:shadow-lg hover:shadow-purple-200/50' : ''
             }`}
           >
             <div className="flex justify-center mb-3 md:mb-6">
               <div
-                className={`p-2 md:p-4 rounded-xl md:rounded-2xl ${theme === 'light' ? 'bg-blue-100' : ''}`}
+                className={`p-2 md:p-4 rounded-xl md:rounded-2xl ${theme === 'light' ? 'bg-purple-100' : ''}`}
                 style={theme === 'dark' ? { backgroundColor: 'rgba(59, 130, 246, 0.15)' } : {}}
               >
                 <feature.icon
                   className={`w-8 h-8 md:w-14 md:h-14 ${
-                    theme === 'light' ? 'text-blue-600' : 'text-blue-400/80'
+                    theme === 'light' ? 'text-purple-600' : 'text-purple-400/80'
                   }`}
                   strokeWidth={1.5}
                 />
@@ -211,7 +211,7 @@ export function HomePopularSection({
     const isActive = activeTab === tab;
     return (
       <button
-        className={`px-4 md:px-6 py-3 ${
+            className={`px-4 md:px-6 py-3 ${
           isActive ? currentTheme.text : currentTheme.textMuted
         } hover:${currentTheme.text} transition-colors relative whitespace-nowrap flex items-center gap-2`}
         onClick={() => onTabChange(tab)}
@@ -222,8 +222,8 @@ export function HomePopularSection({
           <div
             className={`absolute bottom-0 left-0 right-0 h-0.5 ${
               theme === 'light'
-                ? 'bg-gradient-to-r from-blue-600 to-cyan-600'
-                : 'bg-blue-500'
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600'
+                : 'bg-purple-500'
             }`}
           />
         )}
@@ -259,11 +259,15 @@ export function HomePopularSection({
     return books.map((book) => {
       const bookInWishlist = isInWishlist(book.id);
       const isAvailableNow = book.buildings?.some((building) => building.available > 0);
+      
+      const FALLBACK = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600"%3E%3Cdefs%3E%3ClinearGradient id="grad" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:rgb(147,51,234);stop-opacity:1" /%3E%3Cstop offset="100%25" style="stop-color:rgb(219,39,119);stop-opacity:1" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="400" height="600" fill="url(%23grad)"/%3E%3Ctext x="200" y="280" font-family="Arial, sans-serif" font-size="48" fill="white" text-anchor="middle"%3E📚%3C/text%3E%3Ctext x="200" y="340" font-family="Arial, sans-serif" font-size="20" fill="white" text-anchor="middle" opacity="0.9"%3ENo Cover%3C/text%3E%3Ctext x="200" y="370" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle" opacity="0.7"%3EAvailable%3C/text%3E%3C/svg%3E';
+      
+      const imageUrl = book.imageUrl?.trim() || FALLBACK;
 
       return (
         <BookCard
           key={book.id}
-          image={book.imageUrl}
+          image={imageUrl}
           title={book.title}
           onClick={() => onSelectBook(book)}
           shadow="raised"
@@ -271,7 +275,7 @@ export function HomePopularSection({
           coverClassName="rounded-2xl"
           overlay={
             isAvailableNow ? (
-              <Badge className="absolute top-3 right-3 bg-cyan-400 text-slate-900 hover:bg-cyan-400 text-xs px-3 py-1 rounded-full">
+              <Badge className="absolute top-3 right-3 bg-pink-400 text-slate-900 hover:bg-pink-400 text-xs px-3 py-1 rounded-full">
                 Available Now
               </Badge>
             ) : null
@@ -281,12 +285,12 @@ export function HomePopularSection({
               variant="outline"
               disabled={bookInWishlist}
               className={`w-full ${
-                theme === 'light'
-                  ? 'bg-white border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300'
-                  : 'bg-slate-800/40 border-slate-700/50 text-white hover:bg-slate-700/60 hover:border-slate-600'
-              } text-sm py-2 rounded-lg flex items-center justify-center gap-2 ${
-                bookInWishlist ? 'opacity-60 cursor-default hover:bg-transparent hover:border-transparent' : ''
-              }`}
+            theme === 'light'
+              ? 'bg-white border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300'
+              : 'bg-slate-800/40 border-slate-700/50 text-white hover:bg-slate-700/60 hover:border-slate-600'
+          } text-sm py-2 rounded-lg flex items-center justify-center gap-2 ${
+            bookInWishlist ? 'opacity-60 cursor-default hover:bg-transparent hover:border-transparent' : ''
+          }`}
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
@@ -314,21 +318,21 @@ export function HomePopularSection({
       <div className="flex flex-col md:flex-row gap-6 md:gap-10">
         <div className="hidden md:flex flex-col items-center gap-6 min-w-[180px]">
           <div
-            className={`p-5 rounded-full ${theme === 'light' ? 'bg-blue-100' : ''}`}
+            className={`p-5 rounded-full ${theme === 'light' ? 'bg-purple-100' : ''}`}
             style={theme === 'dark' ? { backgroundColor: 'rgba(59, 130, 246, 0.15)' } : {}}
           >
-            <Globe className={`w-16 h-16 ${theme === 'light' ? 'text-blue-600' : 'text-blue-400/80'}`} strokeWidth={1.5} />
+            <Globe className={`w-16 h-16 ${theme === 'light' ? 'text-purple-600' : 'text-purple-400/80'}`} strokeWidth={1.5} />
           </div>
           <div className="text-center">
             <p className={`${currentTheme.text} text-base mb-1`}>Vast Community</p>
             <p className={`${currentTheme.textMuted} text-sm`}>Growing daily</p>
           </div>
           <Button
-            className={`${
-              theme === 'light'
-                ? 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700'
-                : 'bg-blue-600 hover:bg-blue-700'
-            } w-full rounded-full text-sm py-5 shadow-lg`}
+              className={`${
+                theme === 'light'
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                  : 'bg-purple-600 hover:bg-purple-700'
+              } w-full rounded-full text-sm py-5 shadow-lg`}
             onClick={onViewAll}
           >
             View All Books
