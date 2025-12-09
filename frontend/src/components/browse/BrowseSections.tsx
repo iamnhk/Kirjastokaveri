@@ -153,9 +153,9 @@ export function BrowseFilteredEmptyState({ theme, currentTheme, show }: BrowseFi
       <p className={`${currentTheme.textMuted} text-center`}>No books match your current filters. Try adjusting your selection.</p>
       <p
         className={themeClassName(theme, {
-          base: 'mt-4 text-sm',
+          base: 'mt-4 text-sm font-medium',
           light: 'text-purple-600',
-          dark: 'text-purple-300',
+          dark: 'text-purple-400',
         })}
       >
         Tip: Clear filters to see all results again.

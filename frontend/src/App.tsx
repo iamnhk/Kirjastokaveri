@@ -11,8 +11,6 @@ import { AvailabilityMonitor } from './components/system/AvailabilityMonitor';
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
 const Browse = lazy(() => import('./pages/Browse').then(m => ({ default: m.Browse })));
 const MyLists = lazy(() => import('./pages/MyLists').then(m => ({ default: m.MyLists })));
-const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
-const Signup = lazy(() => import('./pages/Signup').then(m => ({ default: m.Signup })));
 
 // Simple loading fallback
 function PageLoader() {
@@ -33,8 +31,6 @@ export default function App() {
             <HashRouter>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
                   <Route path="/" element={<Home />} />
                   <Route path="/browse" element={<Browse />} />
                   <Route path="/my-lists" element={<MyLists />} />

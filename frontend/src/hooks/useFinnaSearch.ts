@@ -41,7 +41,7 @@ export function useFinnaSearch(): UseFinnaSearchResult {
   const [error, setError] = useState<string | null>(null);
   const [resultCount, setResultCount] = useState(0);
 
-  const search = useCallback(async (params: FinnaSearchParams) => {
+  const search = useCallback(async (params: FinnaSearchParams & { subject?: string[] }) => {
     setIsLoading(true);
     setError(null);
     
@@ -57,6 +57,7 @@ export function useFinnaSearch(): UseFinnaSearchResult {
           query: params.lookfor,
           type: (params.type as SearchType) || 'AllFields',
           limit: params.limit || 20,
+          subject: params.subject,
         });
         const mappedBooks = result.records.map(mapSearchRecordToFinnaBook);
         setBooks(mappedBooks);

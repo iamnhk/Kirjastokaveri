@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '../../contexts/AuthContext';
 import { useBooks, type Book } from '../../contexts/BooksContext';
@@ -8,25 +8,8 @@ import { initializeAvailabilityTracking } from '../../services/availabilityMonit
 import type { FinnaBook } from '../../services/finnaApi';
 import { ensureBookShape, mergeFinnaMeta, isFinnaBook } from '../../utils/bookAdapters';
 import { useFilteredBooks, type AvailabilityFilter } from '../../utils/bookFilters';
+import { GENRES, GENRE_MAP } from '../../utils/genreMap';
 
-// Genre mapping: English labels for UI, Finnish terms for Finna API filtering
-export const GENRE_MAP: Record<string, string[]> = {
-  'All': [],
-  'Fiction': ['romaanit', 'kaunokirjallisuus'],
-  'Fantasy': ['fantasia'],
-  'Mystery': ['dekkarit', 'jännitys'],
-  'Romance': ['rakkaus', 'romantiikka'],
-  'Sci-Fi': ['tieteiskirjallisuus', 'scifi'],
-  'Biography': ['elämäkerrat'],
-  'History': ['historia'],
-  'Programming': ['ohjelmointi', 'ohjelmistokehitys'],
-  'Technology': ['tietotekniikka', 'teknologia'],
-  'Web Dev': ['web-ohjelmointi', 'web-kehitys'],
-  'AI & ML': ['tekoäly', 'koneoppiminen'],
-  'Data Science': ['data-analyysi', 'tietojen käsittely'],
-};
-
-const GENRES = Object.keys(GENRE_MAP);
 const AVAILABILITY_OPTIONS: AvailabilityFilter[] = ['All', 'Available', 'Not Available'];
 
 interface BrowseFilters {
@@ -113,29 +96,60 @@ export function useBrowseController(): UseBrowseControllerReturn {
     getClosestAvailableLocation,
   } = useLocationBasedSearch();
 
-  const [selectedGenre, selectGenre] = useState('All');
+  const [selectedGenre, setSelectedGenre] = useState('All');
   const [selectedAvailability, selectAvailability] = useState<AvailabilityFilter>('All');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [selectedBook, setSelectedBook] = useState<FinnaBook | null>(null);
   const [bookForLibrarySelection, setBookForLibrarySelection] = useState<FinnaBook | null>(null);
+  
+  // Track if initial search from URL has been done
+  const initialSearchDone = useRef(false);
+
+  // Function to perform search with current genre filter
+  // We combine the search query with genre terms to get better results
+  const performSearch = useCallback((query: string, genre: string) => {
+    if (!query.trim()) return;
+    
+    const genreTerms = GENRE_MAP[genre] || [];
+    
+    // Build enhanced query: combine user query with genre terms
+    // This searches for books matching the query AND any of the genre terms
+    let enhancedQuery = query;
+    if (genre !== 'All' && genreTerms.length > 0) {
+      // Add first 2-3 most relevant genre terms to the query
+      const relevantTerms = genreTerms.slice(0, 3).join(' OR ');
+      enhancedQuery = `${query} (${relevantTerms})`;
+    }
+    
+    search({ lookfor: enhancedQuery, limit: 40 });
+  }, [search]);
+
+  // Handle genre selection - trigger new search if there's a query
+  const selectGenre = useCallback((genre: string) => {
+    setSelectedGenre(genre);
+    if (searchQuery.trim()) {
+      performSearch(searchQuery, genre);
+    }
+  }, [searchQuery, performSearch]);
 
   useEffect(() => {
     const hash = window.location.hash;
     const urlParams = new URLSearchParams(hash.split('?')[1] || '');
     const query = urlParams.get('q');
 
-    if (query) {
+    if (query && !initialSearchDone.current) {
+      initialSearchDone.current = true;
       // Use timeout to avoid synchronous setState in effect
       const timeoutId = setTimeout(() => {
         setSearchQuery(query);
         setInputValue(query);
-        search({ lookfor: query, limit: 40 });
+        performSearch(query, 'All');
       }, 0);
       return () => clearTimeout(timeoutId);
     }
-  }, [search]);
+  }, [performSearch]);
 
   useEffect(() => {
     if (!locationPermissionGranted) {
@@ -167,8 +181,8 @@ export function useBrowseController(): UseBrowseControllerReturn {
     }
 
     setSearchQuery(inputValue);
-    search({ lookfor: inputValue, limit: 40 });
-  }, [inputValue, search]);
+    performSearch(inputValue, selectedGenre);
+  }, [inputValue, selectedGenre, performSearch]);
 
   const addBookToWishlist = useCallback(
     (book: FinnaBook | Book) => {

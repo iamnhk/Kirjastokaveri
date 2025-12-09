@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { FinnaBook } from '../services/finnaApi';
-import { GENRE_MAP } from '../components/browse/useBrowseController';
+import { GENRE_MAP } from './genreMap';
 
 export type AvailabilityFilter = 'All' | 'Available' | 'Not Available';
 
@@ -13,14 +13,17 @@ interface FilterParams {
 export function useFilteredBooks({ books, selectedGenre, selectedAvailability }: FilterParams) {
   return useMemo(() => {
     return books.filter(book => {
-      // Get Finnish search terms for the selected genre
-      const finnishTerms = GENRE_MAP[selectedGenre] || [];
+      // Get search terms for the selected genre
+      const genreTerms = GENRE_MAP[selectedGenre] || [];
+      
+      // Check if genre matches - search in subjects AND title for better matching
       const genreMatch =
         selectedGenre === 'All' ||
-        finnishTerms.length === 0 ||
+        genreTerms.length === 0 ||
         book.subjects?.some(subject => 
-          finnishTerms.some(term => subject.toLowerCase().includes(term.toLowerCase()))
-        );
+          genreTerms.some(term => subject.toLowerCase().includes(term.toLowerCase()))
+        ) ||
+        genreTerms.some(term => book.title?.toLowerCase().includes(term.toLowerCase()));
 
       if (!genreMatch) {
         return false;
