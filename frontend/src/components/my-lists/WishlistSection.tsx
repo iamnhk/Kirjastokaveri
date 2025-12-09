@@ -34,14 +34,14 @@ export function WishlistSection({ books, onReserve, onRemove, onEditTracking }: 
             className={themeClassName(theme, {
               base: 'w-3 h-3',
               light: 'text-blue-600',
-              dark: 'text-cyan-400',
+              dark: 'text-white',
             })}
           />
           <span
             className={themeClassName(theme, {
-              base: 'text-xs',
+              base: 'text-xs font-medium',
               light: 'text-blue-700',
-              dark: 'text-blue-300',
+              dark: 'text-white',
             })}
           >
             Tracking {book.trackedLibraries.length}{' '}
@@ -55,8 +55,8 @@ export function WishlistSection({ books, onReserve, onRemove, onEditTracking }: 
               variant="outline"
               className={themeClassName(theme, {
                 base: 'text-xs px-2 py-0',
-                light: 'border-blue-300 text-blue-700',
-                dark: 'border-blue-500/50 text-blue-300',
+                light: 'border-blue-300 text-blue-700 bg-white',
+                dark: 'border-slate-600 text-white bg-slate-800/50',
               })}
             >
               {lib.length > 12 ? `${lib.substring(0, 12)}...` : lib}
@@ -67,8 +67,8 @@ export function WishlistSection({ books, onReserve, onRemove, onEditTracking }: 
               variant="outline"
               className={themeClassName(theme, {
                 base: 'text-xs px-2 py-0',
-                light: 'border-blue-300 text-blue-700',
-                dark: 'border-blue-500/50 text-blue-300',
+                light: 'border-blue-300 text-blue-700 bg-white',
+                dark: 'border-slate-600 text-white bg-slate-800/50',
               })}
             >
               +{book.trackedLibraries.length - 2}
@@ -176,8 +176,24 @@ export function WishlistSection({ books, onReserve, onRemove, onEditTracking }: 
               </div>
             }
           >
-            <h3 className={`${currentTheme.text} text-sm line-clamp-2`}>{book.title}</h3>
-            <p className={`${currentTheme.textMuted} text-xs line-clamp-1`}>{book.author}</p>
+            <h3
+              className={themeClassName(theme, {
+                base: 'text-sm line-clamp-2 font-medium',
+                light: currentTheme.text,
+                dark: 'text-white',
+              })}
+            >
+              {book.title}
+            </h3>
+            <p
+              className={themeClassName(theme, {
+                base: 'text-xs line-clamp-1',
+                light: currentTheme.textMuted,
+                dark: 'text-slate-300',
+              })}
+            >
+              {book.author}
+            </p>
             {renderTrackedLibraries(book)}
           </BookCard>
         ))

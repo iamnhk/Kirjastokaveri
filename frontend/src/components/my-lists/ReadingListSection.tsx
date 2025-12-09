@@ -106,8 +106,24 @@ export function ReadingListSection({
               />
             </div>
           </div>
-          <h3 className={`${currentTheme.text} text-sm`}>{book.title}</h3>
-          <p className={`${currentTheme.textMuted} text-xs`}>{book.author}</p>
+          <h3
+            className={themeClassName(theme, {
+              base: 'text-sm font-medium',
+              light: currentTheme.text,
+              dark: 'text-white',
+            })}
+          >
+            {book.title}
+          </h3>
+          <p
+            className={themeClassName(theme, {
+              base: 'text-xs',
+              light: currentTheme.textMuted,
+              dark: 'text-slate-300',
+            })}
+          >
+            {book.author}
+          </p>
           <div className={`${currentTheme.textMuted} text-xs`}>Due: {book.dueDate}</div>
         </BookCard>
       ))}

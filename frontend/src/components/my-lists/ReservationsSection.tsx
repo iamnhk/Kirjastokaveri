@@ -157,8 +157,24 @@ function ReservationCard({
       }
       footer={<div className="flex flex-col gap-2">{statusActionRenderer[book.status]()}</div>}
     >
-      <h3 className={`${currentTheme.text} text-sm line-clamp-2`}>{book.title}</h3>
-      <p className={`${currentTheme.textMuted} text-xs`}>{book.author}</p>
+      <h3
+        className={themeClassName(theme, {
+          base: 'text-sm line-clamp-2 font-medium',
+          light: currentTheme.text,
+          dark: 'text-white',
+        })}
+      >
+        {book.title}
+      </h3>
+      <p
+        className={themeClassName(theme, {
+          base: 'text-xs',
+          light: currentTheme.textMuted,
+          dark: 'text-slate-300',
+        })}
+      >
+        {book.author}
+      </p>
     </BookCard>
   );
 }
