@@ -6,6 +6,7 @@ import asyncio
 import logging
 from typing import Annotated
 
+import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.api.dependencies import get_cache_backend, get_finna_service
@@ -170,6 +171,11 @@ async def search_books(
             limit=limit,
             filters=filter_params,
             facet_fields=FACET_FIELDS,
+        )
+    except httpx.ReadTimeout:
+        raise HTTPException(
+            status_code=504,
+            detail="Finna API took too long to respond. Please try again."
         )
     except httpx.HTTPStatusError as exc:
         # Surface the upstream status for easier debugging in production

@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     finna_search_endpoint: str = "/api/v1/search"
     finna_availability_endpoint: str = "/AJAX/JSON"
     default_search_limit: int = 20
-    request_timeout_seconds: float = 10.0
+    request_timeout_seconds: float = 30.0  # Increased from 10 to 30 seconds
 
     # Cache settings
     redis_url: str | None = "redis://localhost:6379/0"
