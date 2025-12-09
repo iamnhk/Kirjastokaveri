@@ -129,7 +129,7 @@ function MyListsModals(
         {libraryModal.book && (
           <LibrarySelectionModalLazy
             book={libraryModal.book}
-            isOpen
+            isOpen={true}
             onClose={libraryModal.close}
             onLibrarySelection={libraryModal.submit}
           />

@@ -206,30 +206,32 @@ export function useBrowseController(): UseBrowseControllerReturn {
   const trackLibraries = useCallback(
     (book: FinnaBook | Book, selectedLibraries: string[]) => {
       (async () => {
-        const normalizedBook = mergeFinnaMeta(ensureBookShape(book), book);
-        const wishlistEntry = {
-          ...normalizedBook,
-          availability: normalizedBook.availability ?? 'Available Now',
-          trackedLibraries: selectedLibraries,
-        };
-
-        addToWishlist(wishlistEntry, selectedLibraries);
-
         try {
+          const normalizedBook = mergeFinnaMeta(ensureBookShape(book), book);
+          const wishlistEntry = {
+            ...normalizedBook,
+            availability: normalizedBook.availability ?? 'Available Now',
+            trackedLibraries: selectedLibraries,
+          };
+
+          addToWishlist(wishlistEntry, selectedLibraries);
+
           await initializeAvailabilityTracking(
             wishlistEntry,
             wishlistEntry.finnaId ?? String(wishlistEntry.id)
           );
+
           toast.success(
             `Tracking ${selectedLibraries.length} ${
               selectedLibraries.length === 1 ? 'library' : 'libraries'
             } for "${book.title}"`
           );
-        } catch (trackingError) {
-          console.error('Error initializing tracking:', trackingError);
+          setBookForLibrarySelection(null);
+        } catch (error) {
+          console.error('Error initializing tracking:', error);
+          toast.error('Failed to initialize library tracking. Please try again.');
+          setBookForLibrarySelection(null);
         }
-
-        setBookForLibrarySelection(null);
       })();
     },
     [addToWishlist]

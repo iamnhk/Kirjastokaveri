@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   useBooks,
   type BookId,
@@ -7,6 +8,7 @@ import {
   type ReservedBook,
   type WishlistBook,
 } from '../../contexts/BooksContext';
+import { initializeAvailabilityTracking } from '../../services/availabilityMonitor';
 import type { MyListsTab } from './MyListsTabs';
 
 interface ProgressModalState {
@@ -181,9 +183,30 @@ export function useMyListsController() {
   }, []);
 
   const handleLibrarySelection = useCallback(
-    (book: { id: BookId }, selectedLibraries: string[]) => {
-      updateWishlistLibraries(book.id, selectedLibraries);
-      setLibraryModalBook(null);
+    (book: WishlistBook, selectedLibraries: string[]) => {
+      (async () => {
+        try {
+          updateWishlistLibraries(book.id, selectedLibraries);
+
+          // Initialize availability tracking for the updated libraries
+          const finnaId = book.finnaId || String(book.id);
+          await initializeAvailabilityTracking(
+            { ...book, trackedLibraries: selectedLibraries },
+            finnaId
+          );
+
+          toast.success(
+            `Now tracking ${selectedLibraries.length} ${
+              selectedLibraries.length === 1 ? 'library' : 'libraries'
+            } for "${book.title}"`
+          );
+          setLibraryModalBook(null);
+        } catch (error) {
+          console.error('Error updating library tracking:', error);
+          toast.error('Failed to update library tracking. Please try again.');
+          setLibraryModalBook(null);
+        }
+      })();
     },
     [updateWishlistLibraries],
   );

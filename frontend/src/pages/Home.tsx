@@ -16,6 +16,10 @@ const BookDetailModalLazy = lazy(() =>
   import('../components/book/BookDetailModal').then((module) => ({ default: module.BookDetailModal })),
 );
 
+const LibrarySelectionModalLazy = lazy(() =>
+  import('../components/book/LibrarySelectionModal').then((module) => ({ default: module.LibrarySelectionModal })),
+);
+
 export function Home() {
   const { theme, currentTheme } = useThemeTokens();
   const { hero, features, popular, modals, wishlist } = useHomeController();
@@ -50,6 +54,17 @@ export function Home() {
             onTrackLibraries={(book, selectedLibraries) => {
               wishlist.trackLibraries(book, selectedLibraries);
             }}
+          />
+        )}
+      </Suspense>
+
+      <Suspense fallback={null}>
+        {modals.librarySelection.isOpen && modals.librarySelection.book && (
+          <LibrarySelectionModalLazy
+            book={modals.librarySelection.book}
+            isOpen={modals.librarySelection.isOpen}
+            onClose={() => modals.librarySelection.setBook(null)}
+            onLibrarySelection={wishlist.trackLibraries}
           />
         )}
       </Suspense>

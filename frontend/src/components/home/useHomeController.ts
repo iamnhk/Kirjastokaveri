@@ -3,8 +3,9 @@ import { toast } from 'sonner';
 import { useBooks } from '../../contexts/BooksContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useFinnaSearch } from '../../hooks/useFinnaSearch';
-import { ensureBookShape, mergeFinnaMeta } from '../../utils/bookAdapters';
+import { ensureBookShape, mergeFinnaMeta, isFinnaBook } from '../../utils/bookAdapters';
 import { recommendationEngine } from '../../services/recommendationEngine';
+import { initializeAvailabilityTracking } from '../../services/availabilityMonitor';
 import type { FinnaBook } from '../../services/finnaApi';
 import type { FeatureDefinition } from './HomeSections';
 import { Search, Globe, BookMarked, Bell } from 'lucide-react';
@@ -36,6 +37,7 @@ export function useHomeController() {
   const [activeTab, setActiveTab] = useState<TabKey>('trending');
   const [displayBooks, setDisplayBooks] = useState<FinnaBook[]>([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [bookForLibrarySelection, setBookForLibrarySelection] = useState<FinnaBook | null>(null);
 
   useEffect(() => {
     loadTrending();
@@ -117,6 +119,14 @@ export function useHomeController() {
         openAuthModal();
         return;
       }
+
+      // If book has library availability, show library selection modal
+      if (isFinnaBook(book) && book.buildings && book.buildings.length > 0) {
+        setBookForLibrarySelection(book);
+        return;
+      }
+
+      // Otherwise add directly to wishlist
       const normalizedBook = mergeFinnaMeta(ensureBookShape(book), book);
       addToWishlist(normalizedBook);
     },
@@ -130,15 +140,35 @@ export function useHomeController() {
         openAuthModal();
         return;
       }
-      // Add to wishlist with tracked libraries
-      const normalizedBook = mergeFinnaMeta(ensureBookShape(book), book);
-      // Add with tracked libraries info
-      addToWishlist({
-        ...normalizedBook,
-        trackedLibraries: selectedLibraries,
-      } as Book);
-      toast.success(`Tracking ${selectedLibraries.length} ${selectedLibraries.length === 1 ? 'library' : 'libraries'} for "${book.title}"`);
-      closeBookDetail();
+
+      (async () => {
+        try {
+          // Add to wishlist with tracked libraries
+          const normalizedBook = mergeFinnaMeta(ensureBookShape(book), book);
+          const wishlistEntry = {
+            ...normalizedBook,
+            trackedLibraries: selectedLibraries,
+          } as Book;
+
+          addToWishlist(wishlistEntry);
+
+          // Initialize availability tracking
+          const finnaId = (book as FinnaBook).id || String(book.id);
+          await initializeAvailabilityTracking(wishlistEntry, finnaId);
+
+          toast.success(
+            `Tracking ${selectedLibraries.length} ${
+              selectedLibraries.length === 1 ? 'library' : 'libraries'
+            } for "${book.title}"`
+          );
+          setBookForLibrarySelection(null);
+          closeBookDetail();
+        } catch (error) {
+          console.error('Error tracking libraries:', error);
+          toast.error('Failed to initialize library tracking. Please try again.');
+          setBookForLibrarySelection(null);
+        }
+      })();
     },
     [addToWishlist, isAuthenticated, openAuthModal, closeBookDetail],
   );
@@ -194,6 +224,11 @@ export function useHomeController() {
         isOpen: selectedBook !== null,
         open: openBookDetail,
         close: closeBookDetail,
+      },
+      librarySelection: {
+        book: bookForLibrarySelection,
+        setBook: setBookForLibrarySelection,
+        isOpen: bookForLibrarySelection !== null,
       },
     },
     books,
