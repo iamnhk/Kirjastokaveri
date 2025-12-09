@@ -9,8 +9,25 @@ import type { FinnaBook } from '../../services/finnaApi';
 import { ensureBookShape, mergeFinnaMeta, isFinnaBook } from '../../utils/bookAdapters';
 import { useFilteredBooks, type AvailabilityFilter } from '../../utils/bookFilters';
 
-const GENRES = ['All', 'Fiction', 'Fantasy', 'Mystery', 'Romance', 'Science Fiction', 'Biography', 'History'];
-const AVAILABILITY_OPTIONS: AvailabilityFilter[] = ['All', 'Available Now', 'Limited', 'Not Available'];
+// Genre mapping: English labels for UI, Finnish terms for Finna API filtering
+export const GENRE_MAP: Record<string, string[]> = {
+  'All': [],
+  'Fiction': ['romaanit', 'kaunokirjallisuus'],
+  'Fantasy': ['fantasia'],
+  'Mystery': ['dekkarit', 'jännitys'],
+  'Romance': ['rakkaus', 'romantiikka'],
+  'Sci-Fi': ['tieteiskirjallisuus', 'scifi'],
+  'Biography': ['elämäkerrat'],
+  'History': ['historia'],
+  'Programming': ['ohjelmointi', 'ohjelmistokehitys'],
+  'Technology': ['tietotekniikka', 'teknologia'],
+  'Web Dev': ['web-ohjelmointi', 'web-kehitys'],
+  'AI & ML': ['tekoäly', 'koneoppiminen'],
+  'Data Science': ['data-analyysi', 'tietojen käsittely'],
+};
+
+const GENRES = Object.keys(GENRE_MAP);
+const AVAILABILITY_OPTIONS: AvailabilityFilter[] = ['All', 'Available', 'Not Available'];
 
 interface BrowseFilters {
   genres: string[];
