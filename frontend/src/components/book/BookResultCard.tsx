@@ -86,8 +86,8 @@ export function BookResultCard({
           <Badge
             className={`absolute top-2 md:top-3 right-2 md:right-3 text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full ${availabilityColor} text-slate-900`}
           >
-            <span className="hidden md:inline">{availabilityStatus}</span>
-            <span className="md:hidden">{totalAvailable > 0 ? totalAvailable : 'N/A'}</span>
+            <span className="hidden md:inline">{availabilityStatus === 'Unknown' ? 'Check Availability' : availabilityStatus}</span>
+            <span className="md:hidden">{totalAvailable > 0 ? totalAvailable : totalAvailable === -1 ? '?' : 'N/A'}</span>
           </Badge>
           {book.year && (
             <div className={yearBadgeClass}>
