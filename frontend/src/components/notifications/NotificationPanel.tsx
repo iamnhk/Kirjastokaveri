@@ -1,10 +1,8 @@
-import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { Bell, BookOpen, Check, CheckCheck, Clock, Package, Settings, Trash2, X } from 'lucide-react';
+import { Bell, BookOpen, Check, CheckCheck, Clock, Package, Trash2, X } from 'lucide-react';
 import { useThemeTokens } from '../../contexts/ThemeContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import { ImageWithFallback } from '../common/ImageWithFallback';
-import { NotificationSettings } from './NotificationSettings';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
@@ -28,7 +26,6 @@ export function NotificationPanel() {
     deleteNotification,
     clearAll,
   } = useNotifications();
-  const [showSettings, setShowSettings] = useState(false);
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -56,10 +53,6 @@ export function NotificationPanel() {
     }
   };
 
-  if (showSettings) {
-    return <NotificationSettings onBack={() => setShowSettings(false)} />;
-  }
-
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -85,14 +78,6 @@ export function NotificationPanel() {
           <SheetTitle className={currentTheme.text}>
             <div className="flex items-center justify-between">
               <span>Notifications</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowSettings(true)}
-                className={`${theme === 'light' ? 'hover:bg-blue-50' : 'hover:bg-slate-800'}`}
-              >
-                <Settings className="w-5 h-5" />
-              </Button>
             </div>
           </SheetTitle>
           <SheetDescription className={currentTheme.textMuted}>

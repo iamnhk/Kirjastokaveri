@@ -12,9 +12,10 @@ export function AvailabilityMonitor() {
   const { isAuthenticated } = useAuth();
 
   // Enable monitoring only when user is authenticated
+  // Check every 1 minute for demo purposes
   const { checkNow } = useAvailabilityMonitor({
     enabled: isAuthenticated,
-    checkInterval: 5 * 60 * 1000,
+    checkInterval: 1 * 60 * 1000, // 1 minute
   });
 
   useEffect(() => {

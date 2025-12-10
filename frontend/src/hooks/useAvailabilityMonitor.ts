@@ -3,6 +3,7 @@
  */
 
 import { useEffect, useCallback, useRef } from 'react';
+import { toast } from 'sonner';
 import { useBooks } from '../contexts/BooksContext';
 import { useNotifications } from '../contexts/NotificationContext';
 import {
@@ -24,7 +25,7 @@ interface UseAvailabilityMonitorOptions {
 export function useAvailabilityMonitor(options: UseAvailabilityMonitorOptions = {}) {
   const {
     enabled = true,
-    checkInterval = 5 * 60 * 1000, // Default: 5 minutes
+    checkInterval = 1 * 60 * 1000, // Default: 1 minute
   } = options;
 
   const { wishlist } = useBooks();
@@ -56,9 +57,21 @@ export function useAvailabilityMonitor(options: UseAvailabilityMonitorOptions = 
     }
 
     isCheckingRef.current = true;
+    
+    // Count total libraries being tracked
+    const totalLibraries = booksToCheck.reduce(
+      (sum, book) => sum + (book.trackedLibraries?.length || 0), 0
+    );
+    
+    // Show checking toast
+    toast.info(`🔍 Checking ${booksToCheck.length} book${booksToCheck.length > 1 ? 's' : ''} across ${totalLibraries} librar${totalLibraries > 1 ? 'ies' : 'y'}...`, {
+      duration: 2000,
+    });
 
     try {
       const results = await checkAllWishlistAvailability(booksToCheck);
+      
+      let availableCount = 0;
 
       // Process changes and send notifications
       results.forEach((changes, bookId) => {
@@ -68,6 +81,7 @@ export function useAvailabilityMonitor(options: UseAvailabilityMonitorOptions = 
         changes.forEach(change => {
           // Only notify for significant changes
           if (shouldNotify(change)) {
+            availableCount++;
             const message = getNotificationMessage(book, change);
             
             addNotification({
@@ -89,8 +103,40 @@ export function useAvailabilityMonitor(options: UseAvailabilityMonitorOptions = 
           }
         });
       });
+      
+      // Show result toast and ALWAYS send a demo notification after check
+      if (availableCount > 0) {
+        toast.success(`🎉 ${availableCount} book${availableCount > 1 ? 's' : ''} now available!`, {
+          duration: 4000,
+        });
+      } else {
+        // No books available - send notification to show the system works
+        const demoBook = booksToCheck[0];
+        const library = demoBook.trackedLibraries?.[0] || 'Tracked Library';
+        
+        addNotification({
+          id: `check_${Date.now()}`,
+          type: 'availability',
+          message: `"${demoBook.title}" is not available at ${library} yet. We'll keep checking!`,
+          bookId: String(demoBook.id),
+          bookTitle: demoBook.title,
+          bookAuthor: demoBook.author,
+          bookImageUrl: demoBook.image,
+          timestamp: new Date().toISOString(),
+          isRead: false,
+          metadata: {
+            library,
+            available: 0,
+          },
+        });
+        
+        toast.info(`📚 No availability yet for "${demoBook.title}"`, {
+          duration: 3000,
+        });
+      }
     } catch (error) {
       console.error('Error checking availability:', error);
+      toast.error('Failed to check availability', { duration: 2000 });
     } finally {
       isCheckingRef.current = false;
     }
@@ -128,6 +174,35 @@ export function useAvailabilityMonitor(options: UseAvailabilityMonitorOptions = 
     await checkAvailability();
   }, [checkAvailability]);
 
+  /**
+   * Send a test notification to demonstrate the notification system
+   */
+  const sendTestNotification = useCallback(() => {
+    const testBook = wishlist.length > 0 ? wishlist[0] : null;
+    const bookTitle = testBook?.title || 'Sample Book';
+    const bookAuthor = testBook?.author || 'Test Author';
+    const library = testBook?.trackedLibraries?.[0] || 'Helsinki Central Library';
+    
+    addNotification({
+      id: `test_${Date.now()}`,
+      type: 'bookAvailable',
+      message: `"${bookTitle}" is now available at ${library}!`,
+      bookId: testBook ? String(testBook.id) : 'test-book',
+      bookTitle,
+      bookAuthor,
+      bookImageUrl: testBook?.image,
+      timestamp: new Date().toISOString(),
+      isRead: false,
+      metadata: {
+        library,
+        available: 2,
+        previousAvailable: 0,
+      },
+    });
+    
+    toast.success(`🎉 Test notification sent!`, { duration: 2000 });
+  }, [wishlist, addNotification]);
+
   // Auto-start/stop monitoring based on enabled flag
   useEffect(() => {
     if (enabled && wishlist.length > 0) {
@@ -143,6 +218,7 @@ export function useAvailabilityMonitor(options: UseAvailabilityMonitorOptions = 
 
   return {
     checkNow,
+    sendTestNotification,
     startMonitoring,
     stopMonitoring,
     isChecking: isCheckingRef.current,
