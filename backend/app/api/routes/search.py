@@ -254,28 +254,64 @@ async def get_availability(
             try:
                 # Calculate distances for each availability item
                 for item in response.items:
-                    # Extract library name (remove loan period info)
+                    # Extract library name (remove loan period info like ", 28 vrk")
                     library_name = item.library.split(",")[0].strip()
-                    name_parts = library_name.split()
-                    search_term = name_parts[0] if name_parts else library_name
-
-                    # Search for matching library in database
-                    search_pattern = f"%{search_term}%"
+                    
+                    # Try multiple search strategies for better matching
+                    library = None
+                    
+                    # Strategy 1: Full name match
+                    full_pattern = f"%{library_name}%"
                     query = select(Library).filter(
                         Library.is_active == True,
-                        or_(
-                            Library.name.ilike(search_pattern),
-                            Library.city.ilike(search_pattern),
-                            Library.address.ilike(search_pattern),
-                        ),
+                        Library.latitude.isnot(None),
+                        Library.longitude.isnot(None),
+                        Library.name.ilike(full_pattern),
                     )
                     library = db.execute(query).scalars().first()
+                    
+                    # Strategy 2: Try first word (e.g., "Pasilan" from "Pasilan kirjasto")
+                    if not library:
+                        name_parts = library_name.split()
+                        if name_parts:
+                            first_word = name_parts[0]
+                            # Remove common suffixes like "n" (Pasilan -> Pasila)
+                            if first_word.endswith("n") and len(first_word) > 3:
+                                base_name = first_word[:-1]
+                                search_pattern = f"%{base_name}%"
+                            else:
+                                search_pattern = f"%{first_word}%"
+                            
+                            query = select(Library).filter(
+                                Library.is_active == True,
+                                Library.latitude.isnot(None),
+                                Library.longitude.isnot(None),
+                                Library.name.ilike(search_pattern),
+                            )
+                            library = db.execute(query).scalars().first()
+                    
+                    # Strategy 3: Try matching city name
+                    if not library and len(library_name) > 3:
+                        query = select(Library).filter(
+                            Library.is_active == True,
+                            Library.latitude.isnot(None),
+                            Library.longitude.isnot(None),
+                            Library.city.ilike(f"%{library_name.split()[0]}%"),
+                        )
+                        library = db.execute(query).scalars().first()
 
-                    if library and library.latitude and library.longitude:
+                    if library:
                         distance_km = library_service.haversine_distance(
                             latitude, longitude, library.latitude, library.longitude
                         )
                         item.distance_km = round(distance_km, 3)
+                        logger.debug(f"Matched '{library_name}' to '{library.name}' ({library.city}) - {distance_km:.1f}km")
+                    else:
+                        logger.debug(f"No geocoded library found for '{library_name}'")
+                
+                # Log summary
+                matched = sum(1 for item in response.items if item.distance_km is not None)
+                logger.info(f"Distance enrichment: {matched}/{len(response.items)} libraries matched")
                 
                 # Sort by distance
                 response.items.sort(

@@ -258,7 +258,8 @@ export function formatDistance(distanceKm: number): string {
   if (distanceKm < 1) {
     return `${Math.round(distanceKm * 1000)}m`;
   }
-  return `${distanceKm}km`;
+  // Round to 1 decimal place for km
+  return `${distanceKm.toFixed(1)}km`;
 }
 
 /**

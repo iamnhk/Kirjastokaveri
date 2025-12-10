@@ -291,7 +291,8 @@ export function LibraryMap({ buildings, bookTitle, recordId }: LibraryMapProps) 
                   <div className={`mb-1 flex items-center gap-2`}>
                     <span className={`${currentTheme.text} truncate`}>{library.building}</span>
                     {library.distance !== undefined && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className={`text-xs ${theme === 'light' ? 'border-green-300 text-green-700 bg-green-50' : 'border-green-600 text-green-400 bg-green-900/30'}`}>
+                        <MapPin className="w-3 h-3 mr-1" />
                         {library.distance.toFixed(1)} km
                       </Badge>
                     )}

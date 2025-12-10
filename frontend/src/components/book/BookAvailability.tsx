@@ -92,8 +92,9 @@ export function BookAvailability({ buildings, compact = false }: BookAvailabilit
                     </div>
                   )}
                   {building.distance != null && (
-                    <div className={`text-xs ${currentTheme.textMuted} mt-1`}>
-                      📍 {building.distance.toFixed(1)} km away
+                    <div className={`text-xs ${theme === 'light' ? 'text-green-700' : 'text-green-400'} mt-1 flex items-center gap-1`}>
+                      <MapPin className="w-3 h-3" />
+                      {building.distance.toFixed(1)} km away
                     </div>
                   )}
                 </div>

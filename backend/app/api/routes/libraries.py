@@ -147,6 +147,30 @@ async def get_library(
     return _library_to_response(library, distance)
 
 
+@router.get("/stats", response_model=dict)
+async def get_library_stats(
+    db: Session = Depends(get_db),
+) -> dict:
+    """
+    Get statistics about libraries in the database.
+    Useful for diagnosing geocoding coverage.
+    """
+    total = db.execute(select(Library).filter(Library.is_active == True)).scalars().all()
+    with_coords = [l for l in total if l.latitude and l.longitude]
+    without_coords = [l for l in total if not l.latitude or not l.longitude]
+    
+    return {
+        "total_libraries": len(total),
+        "with_coordinates": len(with_coords),
+        "without_coordinates": len(without_coords),
+        "geocoding_coverage_percent": round(len(with_coords) / len(total) * 100, 1) if total else 0,
+        "sample_without_coords": [
+            {"name": l.name, "city": l.city, "address": l.address}
+            for l in without_coords[:10]
+        ] if without_coords else [],
+    }
+
+
 @router.get("/nearby/search", response_model=list[LibraryResponse])
 async def search_nearby_libraries(
     latitude: float = Query(..., description="User's latitude"),

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Check, MapPin } from 'lucide-react';
+import { Check, MapPin, Loader2 } from 'lucide-react';
 import { useThemeTokens } from '../../contexts/ThemeContext';
 import type { Book } from '../../contexts/BooksContext';
 import type { BuildingInfo, FinnaBook } from '../../services/finnaApi';
-import { formatDistance } from '../../services/geolocationService';
-import { mockBuildings } from '../../services/mockData';
+import { getAvailability } from '../../services/finnaApi';
+import { formatDistance, getUserLocation } from '../../services/geolocationService';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import {
@@ -35,36 +35,90 @@ export function LibrarySelectionModal({
 }: LibrarySelectionModalProps) {
   const { theme, currentTheme } = useThemeTokens();
   const [selectedLibraries, setSelectedLibraries] = useState<string[]>(book?.trackedLibraries || []);
+  const [libraryData, setLibraryData] = useState<BuildingInfo[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch real availability data when modal opens
+  useEffect(() => {
+    if (!isOpen || !book?.id) return;
+
+    const fetchAvailability = async () => {
+      setIsLoading(true);
+      try {
+        // Try to get user location for distance calculation
+        let lat: number | undefined;
+        let lon: number | undefined;
+        try {
+          const location = await getUserLocation();
+          if (location) {
+            lat = location.coordinates.latitude;
+            lon = location.coordinates.longitude;
+            console.log(`[LibrarySelectionModal] Got location: ${lat}, ${lon} (fallback: ${location.isFallback})`);
+          }
+        } catch (e) {
+          // Location not available, continue without distance
+          console.log('[LibrarySelectionModal] Location not available:', e);
+        }
+
+        // Fetch real availability from backend
+        const bookId = 'finnaId' in book ? book.finnaId : book.id;
+        console.log(`[LibrarySelectionModal] Fetching availability for ${bookId} with coords: ${lat}, ${lon}`);
+        const availability = await getAvailability(String(bookId), lat, lon);
+        
+        console.log(`[LibrarySelectionModal] Got ${availability.length} items, ${availability.filter(a => a.distance !== undefined).length} with distance`);
+        
+        if (availability.length > 0) {
+          setLibraryData(availability);
+        } else {
+          // Fallback to book.buildings if no availability data
+          setLibraryData(book.buildings || []);
+        }
+      } catch (error) {
+        console.error('[LibrarySelectionModal] Error fetching availability:', error);
+        // Fallback to book.buildings
+        setLibraryData(book.buildings || []);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAvailability();
+  }, [isOpen, book?.id]);
 
   const libraryOptions = useMemo(() => {
     const libraryMap = new Map<string, BuildingInfo>();
 
-    if (book?.buildings) {
+    // Use fetched library data (with real availability and distance)
+    if (libraryData.length > 0) {
+      for (const library of libraryData) {
+        libraryMap.set(library.building, library);
+      }
+    } else if (book?.buildings) {
+      // Fallback to book.buildings if no fetched data yet
       for (const library of book.buildings) {
         libraryMap.set(library.building, library);
       }
     }
 
+    // Add tracked libraries that aren't in the data
     if (book?.trackedLibraries) {
       for (const libraryName of book.trackedLibraries) {
         if (libraryMap.has(libraryName)) {
           continue;
         }
 
-        const fallbackInfo = mockBuildings.find((b) => b.building === libraryName);
+        // Just create a basic entry for the tracked library
         libraryMap.set(libraryName, {
           building: libraryName,
-          location: fallbackInfo?.location || 'Tracked library',
-          available: fallbackInfo?.available ?? 0,
-          total: fallbackInfo?.total ?? 0,
-          callnumber: fallbackInfo?.callnumber,
-          distance: fallbackInfo?.distance,
+          location: 'Tracked library',
+          available: 0,
+          total: 0,
         });
       }
     }
 
     return Array.from(libraryMap.values());
-  }, [book]);
+  }, [book, libraryData]);
 
   const bookTitle = book?.title || 'this book';
 
@@ -130,7 +184,12 @@ export function LibrarySelectionModal({
             scrollbarColor: theme === 'light' ? '#cbd5e1 transparent' : '#475569 transparent'
           }}
         >
-          {sortedLibraries.length === 0 ? (
+          {isLoading ? (
+            <div className={`text-center py-12 ${currentTheme.textMuted}`}>
+              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3 text-blue-500" />
+              <p className="text-lg">Loading library availability...</p>
+            </div>
+          ) : sortedLibraries.length === 0 ? (
             <div className={`text-center py-12 ${currentTheme.textMuted}`}>
               <p className="text-lg">No library information available for this book</p>
             </div>
@@ -138,6 +197,7 @@ export function LibrarySelectionModal({
             sortedLibraries.map((library) => {
               const isSelected = selectedLibraries.includes(library.building);
               const isAvailable = library.available > 0;
+              const hasRealData = library.total > 0 || library.available > 0;
 
               return (
                 <button
@@ -173,23 +233,31 @@ export function LibrarySelectionModal({
                         <h3 className={`font-semibold text-base ${currentTheme.text} leading-tight`}>
                           {library.building}
                         </h3>
-                        <Badge
-                          className={`shrink-0 px-2.5 py-0.5 text-xs font-medium ${
-                            isAvailable 
-                              ? 'bg-emerald-500/90 text-white border-emerald-600' 
-                              : 'bg-slate-400/90 text-white border-slate-500'
-                          }`}
-                        >
-                          {isAvailable ? `${library.available} available` : 'Not Available'}
-                        </Badge>
+                        {hasRealData ? (
+                          <Badge
+                            className={`shrink-0 px-2.5 py-0.5 text-xs font-medium ${
+                              isAvailable 
+                                ? 'bg-emerald-500/90 text-white border-emerald-600' 
+                                : 'bg-slate-400/90 text-white border-slate-500'
+                            }`}
+                          >
+                            {isAvailable ? `${library.available} available` : 'Not Available'}
+                          </Badge>
+                        ) : (
+                          <Badge
+                            className="shrink-0 px-2.5 py-0.5 text-xs font-medium bg-blue-400/90 text-white border-blue-500"
+                          >
+                            Check Availability
+                          </Badge>
+                        )}
                       </div>
 
-                      {library.location && (
+                      {library.location && library.location !== 'Tracked library' && (
                         <p className={`text-sm ${currentTheme.textMuted} mb-2.5`}>{library.location}</p>
                       )}
 
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm">
-                        {library.distance !== undefined && (
+                        {library.distance !== undefined && library.distance > 0 && (
                           <div
                             className={`flex items-center gap-1.5 font-medium ${
                               theme === 'light' ? 'text-green-700' : 'text-green-400'
@@ -200,9 +268,11 @@ export function LibrarySelectionModal({
                           </div>
                         )}
 
-                        <div className={`${currentTheme.textMuted} flex items-center gap-1`}>
-                          <span className="font-medium">{library.total}</span> total
-                        </div>
+                        {hasRealData && (
+                          <div className={`${currentTheme.textMuted} flex items-center gap-1`}>
+                            <span className="font-medium">{library.total}</span> total
+                          </div>
+                        )}
 
                         {library.callnumber && (
                           <div className={`text-xs px-2 py-0.5 rounded ${

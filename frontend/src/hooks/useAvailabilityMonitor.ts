@@ -3,7 +3,6 @@
  */
 
 import { useEffect, useCallback, useRef } from 'react';
-import { toast } from 'sonner';
 import { useBooks } from '../contexts/BooksContext';
 import { useNotifications } from '../contexts/NotificationContext';
 import {
@@ -25,7 +24,7 @@ interface UseAvailabilityMonitorOptions {
 export function useAvailabilityMonitor(options: UseAvailabilityMonitorOptions = {}) {
   const {
     enabled = true,
-    checkInterval = 1 * 60 * 1000, // Default: 1 minute
+    checkInterval = 2 * 60 * 1000, // Default: 2 minutes
   } = options;
 
   const { wishlist } = useBooks();
@@ -57,16 +56,6 @@ export function useAvailabilityMonitor(options: UseAvailabilityMonitorOptions = 
     }
 
     isCheckingRef.current = true;
-    
-    // Count total libraries being tracked
-    const totalLibraries = booksToCheck.reduce(
-      (sum, book) => sum + (book.trackedLibraries?.length || 0), 0
-    );
-    
-    // Show checking toast
-    toast.info(`🔍 Checking ${booksToCheck.length} book${booksToCheck.length > 1 ? 's' : ''} across ${totalLibraries} librar${totalLibraries > 1 ? 'ies' : 'y'}...`, {
-      duration: 2000,
-    });
 
     try {
       const results = await checkAllWishlistAvailability(booksToCheck);
@@ -104,39 +93,16 @@ export function useAvailabilityMonitor(options: UseAvailabilityMonitorOptions = 
         });
       });
       
-      // Show result toast and ALWAYS send a demo notification after check
+      // Send notification only when books become available
       if (availableCount > 0) {
-        toast.success(`🎉 ${availableCount} book${availableCount > 1 ? 's' : ''} now available!`, {
-          duration: 4000,
-        });
+        // Notifications are already added in the loop above
+        console.log(`[AvailabilityMonitor] ${availableCount} book(s) now available`);
       } else {
-        // No books available - send notification to show the system works
-        const demoBook = booksToCheck[0];
-        const library = demoBook.trackedLibraries?.[0] || 'Tracked Library';
-        
-        addNotification({
-          id: `check_${Date.now()}`,
-          type: 'availability',
-          message: `"${demoBook.title}" is not available at ${library} yet. We'll keep checking!`,
-          bookId: String(demoBook.id),
-          bookTitle: demoBook.title,
-          bookAuthor: demoBook.author,
-          bookImageUrl: demoBook.image,
-          timestamp: new Date().toISOString(),
-          isRead: false,
-          metadata: {
-            library,
-            available: 0,
-          },
-        });
-        
-        toast.info(`📚 No availability yet for "${demoBook.title}"`, {
-          duration: 3000,
-        });
+        // Log silently - no notification for "still checking"
+        console.log(`[AvailabilityMonitor] Checked ${booksToCheck.length} book(s), no availability changes`);
       }
     } catch (error) {
-      console.error('Error checking availability:', error);
-      toast.error('Failed to check availability', { duration: 2000 });
+      console.error('[AvailabilityMonitor] Error checking availability:', error);
     } finally {
       isCheckingRef.current = false;
     }
