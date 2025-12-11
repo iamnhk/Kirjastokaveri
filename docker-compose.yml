@@ -1,4 +1,14 @@
+# Kirjastokaveri Docker Compose
+#
+# Usage:
+#   docker compose up              # Just database (for local dev with npm/uvicorn)
+#   docker compose --profile full up --build   # Full stack (db + backend + frontend + seeding)
+#   docker compose --profile tools up          # Database + pgAdmin
+#
+# First full run will fetch 900+ Finnish libraries from Kirjastot.fi API
+
 services:
+  # PostgreSQL Database (always runs)
   db:
     image: postgres:16
     container_name: kirjastokaveri-db
@@ -11,7 +21,13 @@ services:
       - "5434:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kirjastokaveri -d kirjastokaveri"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+  # pgAdmin for database management (optional)
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: kirjastokaveri-pgadmin
@@ -25,7 +41,90 @@ services:
       - db
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+    profiles:
+      - tools
+
+  # Backend API (full profile)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.local
+    container_name: kirjastokaveri-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg://kirjastokaveri:kirjastokaveri@db:5432/kirjastokaveri
+      KIRJASTO_DATABASE_URL: postgresql+psycopg://kirjastokaveri:kirjastokaveri@db:5432/kirjastokaveri
+      KIRJASTO_CORS_ALLOW_ORIGINS: '["http://localhost:5173", "http://localhost:3000"]'
+      KIRJASTO_FINNA_BASE_URL: https://api.finna.fi
+      ENVIRONMENT: development
+      SECRET_KEY: local-dev-secret-key-change-in-production
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - backend-cache:/app/__pycache__
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    profiles:
+      - full
+
+  # Frontend (full profile)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.local
+    container_name: kirjastokaveri-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: http://localhost:8000/api
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+    profiles:
+      - full
+
+  # Database seed service - runs once to populate library data (full profile)
+  db-seed:
+    image: python:3.12-slim
+    container_name: kirjastokaveri-seed
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      KIRJASTO_DATABASE_URL: postgresql+psycopg://kirjastokaveri:kirjastokaveri@db:5432/kirjastokaveri
+      KIRJASTO_CORS_ALLOW_ORIGINS: '["http://localhost:5173"]'
+      KIRJASTO_FINNA_BASE_URL: https://api.finna.fi
+      KIRJASTO_FINNA_SEARCH_ENDPOINT: /api/v1/search
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: >
+      bash -c "
+        echo '📚 Installing dependencies...' &&
+        pip install --quiet httpx sqlalchemy psycopg[binary] pydantic pydantic-settings &&
+        sleep 5 &&
+        echo '🔄 Running library fetch script...' &&
+        python scripts/fetch_kirjastot_fi.py &&
+        echo '✅ Library data import complete!'
+      "
+    restart: "no"
+    profiles:
+      - full
 
 volumes:
   postgres-data:
   pgadmin-data:
+  backend-cache:

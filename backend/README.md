@@ -6,7 +6,7 @@ FastAPI service powering the Kirjastokaveri application - a Finnish Library Comp
 
 - Python 3.12+
 - Recommended: virtual environment manager such as `venv`, `uv`, or `conda`
-- Docker Desktop (for PostgreSQL and Redis)
+- Docker Desktop (for PostgreSQL)
 
 ## Quick start
 
@@ -46,7 +46,19 @@ The API runs at `http://localhost:8000`. Documentation is available at `/docs` a
 ### Search (`/api/search`)
 - `GET /search` - Search for books via Finna API
   - Query params: `query`, `type`, `limit`, `author[]`, `subject[]`, `format[]`
-- `GET /search/availability/{record_id}` - Get book availability across libraries
+- `GET /search/availability/{record_id}` - Get book availability across libraries (with optional `latitude`, `longitude` for distance calculation)
+
+### Unified Books (`/api/books`)
+- `GET /books` - Get user's books (filter by `list_type`: wishlist, reading, completed, reservation)
+- `POST /books` - Add a book to any list
+- `GET /books/{book_id}` - Get specific book
+- `PATCH /books/{book_id}` - Update book (move between lists, update tracked libraries)
+- `DELETE /books/{book_id}` - Remove book
+- `DELETE /books` - Clear books (filter by `list_type`)
+- `POST /books/wishlist` - Add to wishlist (convenience endpoint)
+- `POST /books/reading` - Add to reading list (convenience endpoint)
+- `POST /books/completed` - Add to completed (convenience endpoint)
+- `POST /books/reservations` - Add reservation (convenience endpoint)
 
 ### Wishlist (`/api/wishlist`)
 - `GET /wishlist` - Get user's wishlist items
@@ -55,6 +67,22 @@ The API runs at `http://localhost:8000`. Documentation is available at `/docs` a
 - `PATCH /wishlist/{item_id}` - Update wishlist item settings
 - `DELETE /wishlist/{item_id}` - Remove from wishlist
 - `DELETE /wishlist` - Clear entire wishlist
+
+### Reading List (`/api/reading`)
+- `GET /reading` - Get user's currently reading books
+- `POST /reading` - Add a book to reading list
+- `GET /reading/{item_id}` - Get specific reading item
+- `PATCH /reading/{item_id}` - Update reading progress
+- `DELETE /reading/{item_id}` - Remove from reading list
+- `DELETE /reading` - Clear reading list
+
+### Completed Books (`/api/completed`)
+- `GET /completed` - Get user's completed books
+- `POST /completed` - Add a completed book
+- `GET /completed/{item_id}` - Get specific completed item
+- `PATCH /completed/{item_id}` - Update (e.g., rating, review)
+- `DELETE /completed/{item_id}` - Remove from completed
+- `DELETE /completed` - Clear completed list
 
 ### Reservations (`/api/reservations`)
 - `GET /reservations` - Get user's reservations
@@ -74,6 +102,7 @@ The API runs at `http://localhost:8000`. Documentation is available at `/docs` a
 
 ### Libraries (`/api/libraries`)
 - `GET /libraries` - Get libraries (with optional proximity search)
+- `GET /libraries/stats` - Get geocoding statistics (total libraries, coverage)
 - `GET /libraries/{library_id}` - Get specific library
 - `GET /libraries/nearby/search` - Search nearby libraries by coordinates
 
@@ -88,9 +117,12 @@ backend/
 │   ├── api/
 │   │   ├── routes/
 │   │   │   ├── auth.py
+│   │   │   ├── books.py          # Unified book management
+│   │   │   ├── completed.py      # Completed books list
 │   │   │   ├── health.py
 │   │   │   ├── libraries.py
 │   │   │   ├── notifications.py
+│   │   │   ├── reading.py        # Currently reading list
 │   │   │   ├── reservations.py
 │   │   │   ├── search.py
 │   │   │   └── wishlist.py
@@ -100,25 +132,33 @@ backend/
 │   │   ├── cache.py
 │   │   ├── config.py
 │   │   ├── dependencies.py
+│   │   ├── scheduler.py          # APScheduler for background jobs
 │   │   └── security.py
 │   ├── db/
 │   │   ├── base.py
 │   │   └── session.py
 │   ├── models/
+│   │   ├── completed.py
 │   │   ├── library.py
 │   │   ├── notification.py
+│   │   ├── reading.py
 │   │   ├── reservation.py
 │   │   ├── user.py
+│   │   ├── user_book.py          # Unified book model
 │   │   └── wishlist.py
 │   ├── schemas/
 │   │   ├── auth.py
 │   │   ├── availability.py
+│   │   ├── completed.py
 │   │   ├── library.py
 │   │   ├── notification.py
+│   │   ├── reading.py
 │   │   ├── reservation.py
 │   │   ├── search.py
+│   │   ├── user_book.py
 │   │   └── wishlist.py
 │   ├── services/
+│   │   ├── availability_monitor.py  # Background availability checking
 │   │   ├── finna.py
 │   │   └── library_service.py
 │   ├── __init__.py
@@ -127,6 +167,8 @@ backend/
 │   ├── README.md
 │   ├── env.py
 │   └── versions/
+├── scripts/
+│   └── fetch_kirjastot_fi.py     # Library data fetcher with geocoding
 ├── .env.example
 ├── README.md
 └── requirements.txt
@@ -138,11 +180,19 @@ Key environment variables (see `.env.example`):
 
 | Variable | Description | Default |
 |----------|-------------|---------|
+| `APP_NAME` | Application name | `Kirjastokaveri API` |
+| `ENVIRONMENT` | Environment mode | `development` |
 | `DATABASE_URL` | PostgreSQL connection string | `postgresql+psycopg://kirjastokaveri:kirjastokaveri@localhost:5434/kirjastokaveri` |
 | `SECRET_KEY` | JWT signing secret | (auto-generated if not set) |
 | `FINNA_BASE_URL` | Finna API base URL | `https://api.finna.fi` |
-| `REDIS_URL` | Redis connection string | `redis://localhost:6379/0` |
 | `CORS_ALLOW_ORIGINS` | Allowed CORS origins | `http://localhost:5173` |
+
+## Background Jobs
+
+The backend uses **APScheduler** to run background tasks:
+
+- **Availability Monitor** - Checks wishlist books for availability changes every 2 minutes
+- Creates notifications when books become available at tracked libraries
 
 ## Useful commands
 
