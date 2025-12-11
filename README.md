@@ -171,3 +171,16 @@ Once the backend is running, visit:
 ## Environment Variables
 
 See `backend/.env.example` for required environment variables.
+
+## Troubleshooting
+
+**Blank page with cache errors:**
+If you see `ERR_CACHE_READ_FAILURE` in browser console, clear your browser cache for localhost:5173 or open in incognito mode.
+
+**Docker build issues:**
+
+```bash
+# Clean rebuild
+docker compose down -v
+docker compose --profile full up --build
+```
